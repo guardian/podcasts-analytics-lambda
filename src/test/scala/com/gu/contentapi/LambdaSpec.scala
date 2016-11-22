@@ -2,19 +2,15 @@ package com.gu.contentapi
 
 import com.gu.contentapi.models.FastlyLog
 import org.scalatest.{ FlatSpec, Matchers }
-import purecsv.unsafe._
-
 import scala.io.Source
 
 class LambdaSpec extends FlatSpec with Matchers {
 
   it should "parse a log file into a FastlyView model" in {
 
-    val pageViews: Seq[FastlyLog] = (Source.fromFile("src/test/resources/logs-sample.txt").getLines().toSeq flatMap { line =>
-      FastlyLog.cleanLog(line) map { cleanLine =>
-        CSVReader[FastlyLog].readCSVFromString(cleanLine)
-      }
-    }).flatten
+    val pageViews: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt").getLines().toSeq flatMap { line =>
+      FastlyLog(line)
+    }
 
     val firstPw = FastlyLog(
       time = "Fri, 11 Nov 2016 13:00:00 GMT",
