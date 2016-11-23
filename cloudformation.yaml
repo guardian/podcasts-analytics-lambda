@@ -1,0 +1,64 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CAPI podcasts-analytics lambda
+Parameters:
+  Stage:
+    Description: Environment name
+    Type: String
+    Default: PROD
+Resources:
+  RootRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: LambdaPolicy
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: "*"
+          - Action:
+            - s3:Put*
+            - s3:List*
+            - s3:Get*
+            - s3:Delete*
+            Resource:
+            - arn:aws:s3::*:content-api-config/*
+            - arn:aws:s3::*:content-api-dist/*
+            - arn:aws:s3::*:fastly-logs-audio
+            - arn:aws:s3::*:fastly-logs-audio/*
+            Effect: Allow
+  Lambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: content-api-dist
+        S3Key:
+          Fn::Join:
+          - "/"
+          - - content-api
+            - Ref: Stage
+            - podcasts-analytics-lambda
+            - podcasts-analytics-lambda.zip
+      Description: CAPI podcasts analytics lambda
+      Handler: com.gu.contentapi.Lambda::handleRequest
+      MemorySize: 256
+      Role:
+        Fn::GetAtt:
+        - RootRole
+        - Arn
+      Runtime: java8
+      Timeout: 300
