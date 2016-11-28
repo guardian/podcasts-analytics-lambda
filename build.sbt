@@ -28,8 +28,5 @@ riffRaffPackageType := (packageBin in Universal).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Off-platform::${name.value}"
-riffRaffManifestVcsUrl := "git@github.com:guardian/podcasts-analytics-lambda.git"
-riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch")
-riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
 
 assemblySettings
