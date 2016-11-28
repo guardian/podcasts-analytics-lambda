@@ -1,0 +1,26 @@
+{
+  "defaultStacks": ["content-api-podcasts-analytics"],
+  "packages": {
+    "podcasts-analytics-lambda": {
+      "type": "aws-lambda",
+      "data": {
+        "functions": {
+          "PROD": {
+            "name": "podcasts-analytics-lambda-PROD-Lambda-UQMPL25PEG6O",
+            "filename": "podcasts-analytics-lambda.zip"
+          }
+        },
+        "fileName": "podcasts-analytics-lambda.zip",
+        "bucket": "content-api-dist"
+      }
+    }
+  },
+  "recipes": {
+    "lambda": {
+      "actionsBeforeApp": ["podcasts-analytics-lambda.uploadLambda", "podcasts-analytics-lambda.updateLambda"]
+    },
+    "default": {
+      "depends": ["lambda"]
+    }
+  }
+}

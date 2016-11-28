@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" %  "logback-classic" % "1.1.7",
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.13",
+  "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
   "com.github.melrief" %% "purecsv" % "0.0.6",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test"
 )
@@ -27,8 +28,5 @@ riffRaffPackageType := (packageBin in Universal).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Off-platform::${name.value}"
-riffRaffManifestVcsUrl := "git@github.com:guardian/podcasts-analytics-lambda.git"
-riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch")
-riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
 
 assemblySettings

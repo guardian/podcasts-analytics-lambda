@@ -12,6 +12,8 @@ class LambdaSpec extends FlatSpec with Matchers {
       FastlyLog(line)
     }
 
+    pageViews.length should be(3)
+
     val firstPw = FastlyLog(
       time = "Fri, 11 Nov 2016 13:00:00 GMT",
       request = "GET",
