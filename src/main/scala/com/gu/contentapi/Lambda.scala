@@ -22,7 +22,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
     logObjects foreach { logObj =>
       WriteToFile.fromLogObject(logObj, s"/tmp/${logObj.getKey}")
 
-      val allFastlyLogs: Seq[FastlyLog] = Source.fromFile(s"/tmp/${logObj.getKey}").getLines().toSeq flatMap { line =>
+      val allFastlyLogs: Seq[FastlyLog] = Source.fromFile(s"/tmp/${logObj.getKey}")("ISO-8859-1").getLines().toSeq flatMap { line =>
         FastlyLog(line)
       }
 
