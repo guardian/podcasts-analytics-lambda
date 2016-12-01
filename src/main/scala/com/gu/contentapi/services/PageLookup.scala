@@ -46,7 +46,7 @@ object PageLookup extends StrictLogging {
       Await.result(
         makeCapiQuery(filePath) map {
           case SuccessfulQuery(sr) => {
-            sr.results.headOption foreach { content => cache += (filePath -> content.webUrl) }
+            sr.results.headOption foreach { content => cache.put(filePath, content.webUrl) }
             sr.results.headOption map (_.webUrl)
           }
           case FailedQuery(err) => Some(err)
