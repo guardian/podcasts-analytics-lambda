@@ -1,7 +1,9 @@
 package com.gu.contentapi
 
 import com.gu.contentapi.models.FastlyLog
+import com.gu.contentapi.services.PodcastLookup
 import org.scalatest.{ FlatSpec, Matchers }
+
 import scala.io.Source
 
 class LambdaSpec extends FlatSpec with Matchers {
@@ -77,5 +79,15 @@ class LambdaSpec extends FlatSpec with Matchers {
     )
     thirdPw should be(pageViews(2))
   }
+
+  // Commented out because we don't want to run CAPI query on TeamCity.
+
+  //  it should "Test the Podcast Lookup function" in {
+  //
+  //    val info = PodcastLookup.getPodcastInfo("https://audio.guim.co.uk/2016/12/19-57926-FW-dec19-2016_mixdown.mp3")
+  //
+  //    info.get.podcastName should be("Football Weekly - The Guardian")
+  //    info.get.webUrl should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
+  //  }
 
 }
