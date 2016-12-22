@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.{ Context, RequestHandler }
 import scala.collection.JavaConverters._
 import com.gu.contentapi.Config.AudioLogsBucketName
 import com.gu.contentapi.models.FastlyLog
-import com.gu.contentapi.services.{ PageLookup, S3 }
+import com.gu.contentapi.services.{ PodcastLookup, S3 }
 import com.gu.contentapi.utils.WriteToFile
 import com.typesafe.scalalogging.StrictLogging
 import scala.io.Source
@@ -29,12 +29,12 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
       println(s"DEBUG: I got ${allFastlyLogs.length} to process from logfile")
 
       allFastlyLogs foreach { fastlyLog =>
-        PageLookup.getPagePath("https://audio.guim.co.uk" + fastlyLog.url)
+        PodcastLookup.getPodcastInfo("https://audio.guim.co.uk" + fastlyLog.url)
       }
 
       println("Done :) -- FYI:")
-      println(s"Cache hits: ${PageLookup.cacheHits}")
-      println(s"Cache misses: ${PageLookup.cacheMisses}")
+      println(s"Cache hits: ${PodcastLookup.cacheHits}")
+      println(s"Cache misses: ${PodcastLookup.cacheMisses}")
 
       // TODO send stuff to Ophan.
     }

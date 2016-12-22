@@ -1,15 +1,16 @@
 package com.gu.contentapi.services
 
 import com.gu.contentapi.client._
-import com.gu.contentapi.client.model.v1.SearchResponse
+import com.gu.contentapi.client.model.v1.{ SearchResponse, Tag }
 import com.gu.contentapi.client.model.SearchQuery
 import com.typesafe.scalalogging.StrictLogging
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, Future }
 import com.gu.contentapi.Config.capiKey
+
 import scala.collection.concurrent.TrieMap
 
-object PageLookup extends StrictLogging {
+object PodcastLookup extends StrictLogging {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -19,12 +20,16 @@ object PageLookup extends StrictLogging {
 
   val client = new GuardianContentClient(capiKey)
 
-  val cache = TrieMap[String, String]()
+  case class PodcastInfo(webUrl: String, podcastName: String)
+
+  val cache = TrieMap[String, PodcastInfo]()
   var cacheHits = 0
   var cacheMisses = 0
 
   private def makeCapiQuery(filePath: String): Future[ResponseFromCapiQuery] = {
-    val query = SearchQuery().filename(filePath)
+    val query = SearchQuery()
+      .filename(filePath)
+      .showTags("all")
 
     client.getResponse(query) map { searchResponse: SearchResponse =>
       searchResponse.status match {
@@ -37,7 +42,7 @@ object PageLookup extends StrictLogging {
     }
   }
 
-  def getPagePath(filePath: String): Option[String] = {
+  def getPodcastInfo(filePath: String): Option[PodcastInfo] = {
     if (cache contains filePath) {
       cacheHits += 1
       cache.get(filePath)
@@ -46,10 +51,17 @@ object PageLookup extends StrictLogging {
       Await.result(
         makeCapiQuery(filePath) map {
           case SuccessfulQuery(sr) => {
-            sr.results.headOption foreach { content => cache.put(filePath, content.webUrl) }
-            sr.results.headOption map (_.webUrl)
+            for {
+              webUrl <- sr.results.headOption map (_.webUrl)
+              tags <- sr.results.headOption.map(_.tags)
+              podcastName <- tags.find(_.podcast.isDefined).map(_.webTitle)
+            } yield {
+              // update cache and return info
+              sr.results.headOption foreach { content => cache.put(filePath, PodcastInfo(webUrl, podcastName)) }
+              PodcastInfo(webUrl, podcastName)
+            }
           }
-          case FailedQuery(err) => Some(err)
+          case FailedQuery(err) => None
         }, 2.seconds
       )
     }
