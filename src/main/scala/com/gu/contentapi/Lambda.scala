@@ -2,12 +2,15 @@ package com.gu.contentapi
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.lambda.runtime.{ Context, RequestHandler }
+
 import scala.collection.JavaConverters._
 import com.gu.contentapi.Config.AudioLogsBucketName
-import com.gu.contentapi.models.FastlyLog
+import com.gu.contentapi.models.{ Event, FastlyLog }
 import com.gu.contentapi.services.{ PodcastLookup, S3 }
-import com.gu.contentapi.utils.WriteToFile
+import com.gu.contentapi.utils.{ Encoding, WriteToFile }
 import com.typesafe.scalalogging.StrictLogging
+import okhttp3.{ OkHttpClient, Request }
+
 import scala.io.Source
 
 class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
@@ -22,23 +25,37 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
     logObjects foreach { logObj =>
       WriteToFile.fromLogObject(logObj, s"/tmp/${logObj.getKey}")
 
-      val allFastlyLogs: Seq[FastlyLog] = Source.fromFile(s"/tmp/${logObj.getKey}")("ISO-8859-1").getLines().toSeq flatMap { line =>
+      val allFastlyLogs = Source.fromFile(s"/tmp/${logObj.getKey}")("ISO-8859-1").getLines().toSeq flatMap { line =>
         FastlyLog(line)
       }
 
       println(s"DEBUG: I got ${allFastlyLogs.length} to process from logfile")
 
-      allFastlyLogs foreach { fastlyLog =>
-        PodcastLookup.getPodcastInfo("https://audio.guim.co.uk" + fastlyLog.url)
-      }
+      allFastlyLogs flatMap (Event(_)) foreach Ophan.send
 
       println("Done :) -- FYI:")
       println(s"Cache hits: ${PodcastLookup.cacheHits}")
       println(s"Cache misses: ${PodcastLookup.cacheMisses}")
-
-      // TODO send stuff to Ophan.
     }
+  }
+}
 
+object Ophan {
+
+  private val client = new OkHttpClient()
+  private val OphanUrl = "https://ophan.theguardian.com/i.gif"
+
+  def send(event: Event): Unit = {
+    val Url = Encoding.encodeURIComponent(event.url)
+    val IpAddress = Encoding.encodeURIComponent(event.ipAddress)
+    val EpisodeId = Encoding.encodeURIComponent(event.episodeId)
+    val PodcastId = Encoding.encodeURIComponent(event.podcastId)
+
+    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId"
+
+    val request = new Request.Builder().url(url).build()
+
+    client.newCall(request).execute()
   }
 
 }

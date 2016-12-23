@@ -1,8 +1,9 @@
 package com.gu.contentapi
 
-import com.gu.contentapi.models.FastlyLog
+import com.gu.contentapi.models.{ Event, FastlyLog }
 import com.gu.contentapi.services.PodcastLookup
 import org.scalatest.{ FlatSpec, Matchers }
+
 import scala.io.Source
 
 class LambdaSpec extends FlatSpec with Matchers {
@@ -79,14 +80,59 @@ class LambdaSpec extends FlatSpec with Matchers {
     thirdPw should be(pageViews(2))
   }
 
-  // Commented out because we don't want to run CAPI query on TeamCity.
+
+  // TODO: the following tests should be treated as integration tests rather than being commented out
 
   //  it should "Test the Podcast Lookup function" in {
   //
   //    val info = PodcastLookup.getPodcastInfo("https://audio.guim.co.uk/2016/12/19-57926-FW-dec19-2016_mixdown.mp3")
   //
-  //    info.get.podcastName should be("Football Weekly - The Guardian")
-  //    info.get.episodeWebUrl should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
+  //    info.get.podcastId should be("https://www.theguardian.com/football/series/footballweekly")
+  //    info.get.episodeId should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
+  //  }
+  //
+  //  it should "Convert a fastly log to an Event ready to be sent to Ophan" in {
+  //
+  //    val log1 = FastlyLog(
+  //      time = "Fri, 11 Nov 2016 13:00:00 GMT",
+  //      request = "GET",
+  //      url = "/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+  //      host = "composer-uploads-audio.s3-website-eu-west-1.amazonaws.com",
+  //      status = "206",
+  //      ipAddress = "66.87.114.159",
+  //      userAgent = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
+  //      referrer = "",
+  //      range = "bytes=6422528-",
+  //      headerBytesRead = "232",
+  //      bodyBytesRead = "0",
+  //      contentType = "audio/mp3",
+  //      age = "1592",
+  //      countryCode = "US",
+  //      region = "MI",
+  //      city = "Ypsilanti",
+  //      location = ""
+  //    )
+  //
+  //    Event(log1) should be(Some(Event(
+  //      viewId = "-5103960900567454554",
+  //      url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+  //      ipAddress = "66.87.114.159",
+  //      episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
+  //      podcastId = "https://www.theguardian.com/football/series/footballweekly"
+  //    )))
+  //  }
+  //
+  //  it should "send a single podcast to Ophan" in {
+  //
+  //    val ev = Event(
+  //      viewId = "-5103960900567454554",
+  //      url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+  //      ipAddress = "66.87.114.159",
+  //      episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
+  //      podcastId = "https://www.theguardian.com/football/series/footballweekly"
+  //    )
+  //
+  //    //    Ophan.send(ev)
   //  }
 
 }

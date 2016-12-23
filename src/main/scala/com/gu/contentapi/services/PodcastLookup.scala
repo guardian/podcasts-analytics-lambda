@@ -21,8 +21,8 @@ object PodcastLookup extends StrictLogging {
   val client = new GuardianContentClient(capiKey)
 
   case class PodcastInfo(
-    episodeWebUrl: String,
-    podcastName: String
+    episodeId: String,
+    podcastId: String
   )
 
   val cache = TrieMap[String, PodcastInfo]()
@@ -56,7 +56,7 @@ object PodcastLookup extends StrictLogging {
           case SuccessfulQuery(sr) => {
             for {
               result <- sr.results.headOption
-              podcastName <- result.tags.find(_.podcast.isDefined).map(_.webTitle)
+              podcastName <- result.tags.find(_.podcast.isDefined).map(_.webUrl)
             } yield {
               val podcastInfo = PodcastInfo(result.webUrl, podcastName)
               cache.put(filePath, podcastInfo)
