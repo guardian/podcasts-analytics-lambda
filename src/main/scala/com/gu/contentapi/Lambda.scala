@@ -10,7 +10,7 @@ import com.gu.contentapi.services.{ PodcastLookup, S3 }
 import com.gu.contentapi.utils.{ Encoding, WriteToFile }
 import com.typesafe.scalalogging.StrictLogging
 import okhttp3.{ OkHttpClient, Request }
-
+import scala.util.Random.shuffle
 import scala.io.Source
 
 class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
@@ -31,11 +31,17 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
       println(s"DEBUG: I got ${allFastlyLogs.length} to process from logfile")
 
-      allFastlyLogs flatMap (Event(_)) foreach Ophan.send
+      val events = allFastlyLogs flatMap (Event(_))
+
+      shuffle(events) foreach {
+        Thread.sleep(270000 / events.length) // send events over a period of 4 minutes and 30 seconds
+        Ophan.send
+      }
 
       println("Done :) -- FYI:")
       println(s"Cache hits: ${PodcastLookup.cacheHits}")
       println(s"Cache misses: ${PodcastLookup.cacheMisses}")
+      println(s"Events sent to Ophan: ${events.length}")
     }
   }
 }
