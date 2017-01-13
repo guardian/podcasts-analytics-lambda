@@ -2,7 +2,6 @@ package com.gu.contentapi
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.lambda.runtime.{ Context, RequestHandler }
-
 import scala.collection.JavaConverters._
 import com.gu.contentapi.Config.AudioLogsBucketName
 import com.gu.contentapi.models.{ Event, FastlyLog }
@@ -10,7 +9,6 @@ import com.gu.contentapi.services.{ PodcastLookup, S3 }
 import com.gu.contentapi.utils.{ Encoding, WriteToFile }
 import com.typesafe.scalalogging.StrictLogging
 import okhttp3.{ OkHttpClient, Request }
-import scala.util.Random.shuffle
 import scala.io.Source
 
 class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
@@ -33,9 +31,9 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
       val events = allFastlyLogs flatMap (Event(_))
 
-      shuffle(events) foreach {
+      events foreach { e =>
         Thread.sleep(270000 / events.length) // send events over a period of 4 minutes and 30 seconds
-        Ophan.send
+        Ophan.send(e)
       }
 
       println("Done :) -- FYI:")
