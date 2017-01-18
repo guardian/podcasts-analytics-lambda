@@ -8,7 +8,8 @@ case class Event(
   url: String,
   ipAddress: String,
   episodeId: String,
-  podcastId: String
+  podcastId: String,
+  ua: String
 )
 
 object Event {
@@ -22,7 +23,8 @@ object Event {
         url = fullPathToFile,
         ipAddress = fastlyLog.ipAddress,
         episodeId = info.episodeId,
-        podcastId = info.podcastId
+        podcastId = info.podcastId,
+        ua = fastlyLog.userAgent
       )
     }
   }
