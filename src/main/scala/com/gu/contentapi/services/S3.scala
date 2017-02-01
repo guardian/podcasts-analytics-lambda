@@ -1,7 +1,7 @@
 package com.gu.contentapi.services
 
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.{ AmazonS3ClientBuilder, AmazonS3 }
 import com.amazonaws.services.s3.model.S3Object
 import com.typesafe.scalalogging.StrictLogging
 import scala.util.{ Failure, Success, Try }
@@ -9,7 +9,7 @@ import com.gu.contentapi.Config.AudioLogsBucketName
 
 object S3 extends StrictLogging {
 
-  val client: AmazonS3Client = new AmazonS3Client().withRegion(Regions.EU_WEST_1)
+  val client: AmazonS3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build()
 
   def downloadReport(reportName: String): Option[S3Object] = {
     Try(client.getObject(AudioLogsBucketName, reportName)) match {
