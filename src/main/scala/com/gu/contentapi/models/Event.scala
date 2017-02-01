@@ -15,18 +15,22 @@ case class Event(
 object Event {
 
   def apply(fastlyLog: FastlyLog): Option[Event] = {
-    val fullPathToFile = s"https://audio.guim.co.uk${fastlyLog.url}"
 
-    PodcastLookup.getPodcastInfo(fullPathToFile) map { info =>
-      Event(
-        viewId = LongHashFunction.xx_r39().hashChars(fullPathToFile + fastlyLog.time).toString,
-        url = fullPathToFile,
-        ipAddress = fastlyLog.ipAddress,
-        episodeId = info.episodeId,
-        podcastId = info.podcastId,
-        ua = fastlyLog.userAgent
-      )
-    }
+    if (fastlyLog.status != "206") { // filter out partial content requests
+      val fullPathToFile = s"https://audio.guim.co.uk${fastlyLog.url}"
+
+      PodcastLookup.getPodcastInfo(fullPathToFile) map { info =>
+        Event(
+          viewId = LongHashFunction.xx_r39().hashChars(fullPathToFile + fastlyLog.time).toString,
+          url = fullPathToFile,
+          ipAddress = fastlyLog.ipAddress,
+          episodeId = info.episodeId,
+          podcastId = info.podcastId,
+          ua = fastlyLog.userAgent
+        )
+      }
+    } else None
+
   }
 
 }

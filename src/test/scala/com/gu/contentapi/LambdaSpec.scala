@@ -2,19 +2,19 @@ package com.gu.contentapi
 
 import com.gu.contentapi.models.{ Event, FastlyLog }
 import com.gu.contentapi.services.PodcastLookup
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{ FlatSpec, Matchers, OptionValues }
 
 import scala.io.Source
 
-class LambdaSpec extends FlatSpec with Matchers {
+class LambdaSpec extends FlatSpec with Matchers with OptionValues {
 
   it should "parse a log file into a FastlyView model" in {
 
-    val pageViews: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt").getLines().toSeq flatMap { line =>
+    val pageViews: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line =>
       FastlyLog(line)
     }
 
-    pageViews.length should be(3)
+    pageViews.length should be(86)
 
     val firstPw = FastlyLog(
       time = "Fri, 11 Nov 2016 13:00:00 GMT",
@@ -133,6 +133,21 @@ class LambdaSpec extends FlatSpec with Matchers {
   //      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
   //    )
   //    //    Ophan.send(ev)
+  //  }
+
+  //  it should "when converting a FastlyLog to an Event, it should filter out all the 206 partial content statuses" in {
+  //
+  //    val logs: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line => FastlyLog(line) }
+  //
+  //    val logsGrouped = logs.groupBy(f => f.status).mapValues(_.length)
+  //
+  //    logsGrouped.get("206").value should be(71)
+  //    logsGrouped.get("200").value should be(12)
+  //    logsGrouped.get("304").value should be(3)
+  //
+  //    val events = logs flatMap (Event(_))
+  //
+  //    events.length should be(15)
   //  }
 
 }
