@@ -90,27 +90,27 @@ class LambdaSpec extends FlatSpec with Matchers with OptionValues {
     info.get.episodeId should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
   }
 
-  it should "Convert a fastly log to an event ready to be sent to Ophan" in {
+  val log1 = FastlyLog(
+    time = "Fri, 11 Nov 2016 13:00:00 GMT",
+    request = "GET",
+    url = "/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+    host = "composer-uploads-audio.s3-website-eu-west-1.amazonaws.com",
+    status = "206",
+    ipAddress = "66.87.114.159",
+    userAgent = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
+    referrer = "",
+    range = "bytes=6422528-",
+    headerBytesRead = "232",
+    bodyBytesRead = "0",
+    contentType = "audio/mp3",
+    age = "1592",
+    countryCode = "US",
+    region = "MI",
+    city = "Ypsilanti",
+    location = ""
+  )
 
-    val log1 = FastlyLog(
-      time = "Fri, 11 Nov 2016 13:00:00 GMT",
-      request = "GET",
-      url = "/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
-      host = "composer-uploads-audio.s3-website-eu-west-1.amazonaws.com",
-      status = "206",
-      ipAddress = "66.87.114.159",
-      userAgent = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
-      referrer = "",
-      range = "bytes=6422528-",
-      headerBytesRead = "232",
-      bodyBytesRead = "0",
-      contentType = "audio/mp3",
-      age = "1592",
-      countryCode = "US",
-      region = "MI",
-      city = "Ypsilanti",
-      location = ""
-    )
+  it should "Convert a fastly log to an event ready to be sent to Ophan" in {
 
     Event(log1) should be(Some(Event(
       viewId = "-5103960900567454554",
@@ -119,6 +119,21 @@ class LambdaSpec extends FlatSpec with Matchers with OptionValues {
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
       podcastId = "https://www.theguardian.com/football/series/footballweekly",
       ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
+    )))
+  }
+
+  it should "Handle platform parameter correctly" in {
+
+    val log2 = log1.copy(url = log1.url + "?platform=amazon-echo")
+
+    Event(log2) should be(Some(Event(
+      viewId = "-5103960900567454554",
+      url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+      ipAddress = "66.87.114.159",
+      episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
+      podcastId = "https://www.theguardian.com/football/series/footballweekly",
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
+      platform = Some("amazon-echo")
     )))
   }
 

@@ -6,7 +6,7 @@ import scala.util.Success
 case class FastlyLog(
   time: String,
   request: String,
-  url: String,
+  url: String, /* relative URL */
   host: String,
   status: String,
   ipAddress: String,

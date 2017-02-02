@@ -57,8 +57,9 @@ object Ophan {
     val EpisodeId = Encoding.encodeURIComponent(event.episodeId)
     val PodcastId = Encoding.encodeURIComponent(event.podcastId)
     val UserAgent = Encoding.encodeURIComponent(event.ua)
+    val platform = event.platform.map(Encoding.encodeURIComponent)
 
-    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent"
+    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent" + platform.map(p => "&platform=" + p).getOrElse("")
 
     val request = new Request.Builder().url(url).build()
 
