@@ -82,73 +82,73 @@ class LambdaSpec extends FlatSpec with Matchers with OptionValues {
 
   //TODO: the following tests should be treated as integration tests rather than being commented out
 
-  // it should "Test the Podcast Lookup function" in {
+  it should "Test the Podcast Lookup function" in {
 
-  //   val info = PodcastLookup.getPodcastInfo("https://audio.guim.co.uk/2016/12/19-57926-FW-dec19-2016_mixdown.mp3")
+    val info = PodcastLookup.getPodcastInfo("https://audio.guim.co.uk/2016/12/19-57926-FW-dec19-2016_mixdown.mp3")
 
-  //   info.get.podcastId should be("https://www.theguardian.com/football/series/footballweekly")
-  //   info.get.episodeId should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
-  // }
+    info.get.podcastId should be("https://www.theguardian.com/football/series/footballweekly")
+    info.get.episodeId should be("https://www.theguardian.com/football/blog/audio/2016/dec/19/manchester-city-bounce-back-to-leave-wenger-fuming-football-weekly")
+  }
 
-  // it should "Convert a fastly log to an event ready to be sent to Ophan" in {
+  it should "Convert a fastly log to an event ready to be sent to Ophan" in {
 
-  //   val log1 = FastlyLog(
-  //     time = "Fri, 11 Nov 2016 13:00:00 GMT",
-  //     request = "GET",
-  //     url = "/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
-  //     host = "composer-uploads-audio.s3-website-eu-west-1.amazonaws.com",
-  //     status = "206",
-  //     ipAddress = "66.87.114.159",
-  //     userAgent = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
-  //     referrer = "",
-  //     range = "bytes=6422528-",
-  //     headerBytesRead = "232",
-  //     bodyBytesRead = "0",
-  //     contentType = "audio/mp3",
-  //     age = "1592",
-  //     countryCode = "US",
-  //     region = "MI",
-  //     city = "Ypsilanti",
-  //     location = ""
-  //   )
+    val log1 = FastlyLog(
+      time = "Fri, 11 Nov 2016 13:00:00 GMT",
+      request = "GET",
+      url = "/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+      host = "composer-uploads-audio.s3-website-eu-west-1.amazonaws.com",
+      status = "206",
+      ipAddress = "66.87.114.159",
+      userAgent = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
+      referrer = "",
+      range = "bytes=6422528-",
+      headerBytesRead = "232",
+      bodyBytesRead = "0",
+      contentType = "audio/mp3",
+      age = "1592",
+      countryCode = "US",
+      region = "MI",
+      city = "Ypsilanti",
+      location = ""
+    )
 
-  //   Event(log1) should be(Some(Event(
-  //     viewId = "-5103960900567454554",
-  //     url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
-  //     ipAddress = "66.87.114.159",
-  //     episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
-  //     podcastId = "https://www.theguardian.com/football/series/footballweekly",
-  //     ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
-  //   )))
-  // }
+    Event(log1) should be(Some(Event(
+      viewId = "-5103960900567454554",
+      url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+      ipAddress = "66.87.114.159",
+      episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
+      podcastId = "https://www.theguardian.com/football/series/footballweekly",
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
+    )))
+  }
 
-  // it should "send a single podcast to Ophan" in {
+  it should "send a single podcast to Ophan" in {
 
-  //   val ev = Event(
-  //     viewId = "-5103960900567454554",
-  //     url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
-  //     ipAddress = "66.87.114.159",
-  //     episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
-  //     podcastId = "https://www.theguardian.com/football/series/footballweekly",
-  //     ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
-  //   )
-  //   //    Ophan.send(ev)
-  // }
+    val ev = Event(
+      viewId = "-5103960900567454554",
+      url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
+      ipAddress = "66.87.114.159",
+      episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
+      podcastId = "https://www.theguardian.com/football/series/footballweekly",
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
+    )
+    //    Ophan.send(ev)
+  }
 
-  // it should "when converting a FastlyLog to an Event, it should filter out all the 206 partial content statuses" in {
+  it should "when converting a FastlyLog to an Event, it should filter out all the 206 partial content statuses" in {
 
-  //   val logs: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line => FastlyLog(line) }
+    val logs: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line => FastlyLog(line) }
 
-  //   val logsGrouped = logs.groupBy(f => f.status).mapValues(_.length)
+    val logsGrouped = logs.groupBy(f => f.status).mapValues(_.length)
 
-  //   logsGrouped.get("206").value should be(71)
-  //   logsGrouped.get("200").value should be(12)
-  //   logsGrouped.get("304").value should be(3)
+    logsGrouped.get("206").value should be(71)
+    logsGrouped.get("200").value should be(12)
+    logsGrouped.get("304").value should be(3)
 
-  //   val events = logs.filter(FastlyLog.onlyDownloads).flatMap(Event(_))
+    val events = logs.filter(FastlyLog.onlyDownloads).flatMap(Event(_))
 
-  //   events.length should be(15)
+    events.length should be(15)
 
-  // }
+  }
 
 }
