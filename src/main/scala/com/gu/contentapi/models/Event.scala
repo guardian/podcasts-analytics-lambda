@@ -9,28 +9,31 @@ case class Event(
   ipAddress: String,
   episodeId: String,
   podcastId: String,
-  ua: String
+  ua: String,
+  platform: Option[String] = None
 )
 
 object Event {
 
+  val hostUrl = "https://audio.guim.co.uk"
+
   def apply(fastlyLog: FastlyLog): Option[Event] = {
 
-    if (fastlyLog.status != "206") { // filter out partial content requests
-      val fullPathToFile = s"https://audio.guim.co.uk${fastlyLog.url}"
+    val parsedUrl = okhttp3.HttpUrl.parse(hostUrl + fastlyLog.url)
+    val path = parsedUrl.encodedPath()
+    val absoluteUrlToFile = hostUrl + path
 
-      PodcastLookup.getPodcastInfo(fullPathToFile) map { info =>
-        Event(
-          viewId = LongHashFunction.xx_r39().hashChars(fullPathToFile + fastlyLog.time).toString,
-          url = fullPathToFile,
-          ipAddress = fastlyLog.ipAddress,
-          episodeId = info.episodeId,
-          podcastId = info.podcastId,
-          ua = fastlyLog.userAgent
-        )
-      }
-    } else None
-
+    PodcastLookup.getPodcastInfo(absoluteUrlToFile) map { info =>
+      Event(
+        viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time).toString,
+        url = absoluteUrlToFile,
+        ipAddress = fastlyLog.ipAddress,
+        episodeId = info.episodeId,
+        podcastId = info.podcastId,
+        ua = fastlyLog.userAgent,
+        platform = Option(parsedUrl.queryParameter("platform"))
+      )
+    }
   }
 
 }

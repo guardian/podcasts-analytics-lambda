@@ -6,7 +6,7 @@ import scala.util.Success
 case class FastlyLog(
   time: String,
   request: String,
-  url: String,
+  url: String, /* relative URL */
   host: String,
   status: String,
   ipAddress: String,
@@ -43,6 +43,9 @@ object FastlyLog {
   // turns a log line into a nicely formatted csv string we can fit in our model
 
   val cleanLog: String => Option[String] = removeFastlyFootprint _ andThen makeCsvLike andThen replaceNullElements
+
+  /* filter out partial content requests */
+  val onlyDownloads: FastlyLog => Boolean = { log => log.status != "206" }
 
 }
 

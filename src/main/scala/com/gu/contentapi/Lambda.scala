@@ -6,9 +6,10 @@ import scala.collection.JavaConverters._
 import com.gu.contentapi.Config.AudioLogsBucketName
 import com.gu.contentapi.models.{ Event, FastlyLog }
 import com.gu.contentapi.services.{ PodcastLookup, S3 }
-import com.gu.contentapi.utils.{ Encoding, WriteToFile }
+import com.gu.contentapi.utils.{ Encoding }
 import com.typesafe.scalalogging.StrictLogging
 import okhttp3.{ OkHttpClient, Request }
+import com.amazonaws.util.IOUtils
 import scala.io.Source
 
 class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
@@ -21,15 +22,16 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
       .toList
 
     logObjects foreach { logObj =>
-      WriteToFile.fromLogObject(logObj, s"/tmp/${logObj.getKey}")
 
-      val allFastlyLogs = Source.fromFile(s"/tmp/${logObj.getKey}")("ISO-8859-1").getLines().toSeq flatMap { line =>
+      val allFastlyLogs: Seq[FastlyLog] = Source.fromBytes(IOUtils.toByteArray(logObj.getObjectContent))("ISO-8859-1").getLines().toSeq flatMap { line =>
         FastlyLog(line)
       }
 
       println(s"DEBUG: I got ${allFastlyLogs.length} to process from logfile")
 
-      val events = allFastlyLogs flatMap (Event(_))
+      val downloadsLogs = allFastlyLogs.filter(FastlyLog.onlyDownloads)
+
+      val events: Seq[Event] = downloadsLogs.flatMap(Event(_))
 
       events foreach { e =>
         Thread.sleep(270000 / events.length) // send events over a period of 4 minutes and 30 seconds
@@ -55,8 +57,9 @@ object Ophan {
     val EpisodeId = Encoding.encodeURIComponent(event.episodeId)
     val PodcastId = Encoding.encodeURIComponent(event.podcastId)
     val UserAgent = Encoding.encodeURIComponent(event.ua)
+    val platform = event.platform.map(Encoding.encodeURIComponent)
 
-    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent"
+    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent" + platform.map(p => "&platform=" + p).getOrElse("")
 
     val request = new Request.Builder().url(url).build()
 
