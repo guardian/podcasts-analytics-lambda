@@ -113,7 +113,7 @@ class LambdaSpec extends FlatSpec with Matchers with OptionValues {
   it should "Convert a fastly log to an event ready to be sent to Ophan" in {
 
     Event(log1) should be(Some(Event(
-      viewId = "-5103960900567454554",
+      viewId = "-1969270942156082233",
       url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
       ipAddress = "66.87.114.159",
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
@@ -127,7 +127,7 @@ class LambdaSpec extends FlatSpec with Matchers with OptionValues {
     val log2 = log1.copy(url = log1.url + "?platform=amazon-echo")
 
     Event(log2) should be(Some(Event(
-      viewId = "-5103960900567454554",
+      viewId = "-1969270942156082233",
       url = "https://audio.guim.co.uk/2016/11/10-58860-FW-10nov-2016_mixdown.mp3",
       ipAddress = "66.87.114.159",
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
