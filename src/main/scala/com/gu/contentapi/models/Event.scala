@@ -25,7 +25,7 @@ object Event {
 
     PodcastLookup.getPodcastInfo(absoluteUrlToFile) map { info =>
       Event(
-        viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time).toString,
+        viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time + fastlyLog.ipAddress + fastlyLog.userAgent).toString,
         url = absoluteUrlToFile,
         ipAddress = fastlyLog.ipAddress,
         episodeId = info.episodeId,
