@@ -40,6 +40,7 @@ Resources:
             - arn:aws:s3::*:content-api-dist/*
             - arn:aws:s3::*:fastly-logs-audio
             - arn:aws:s3::*:fastly-logs-audio/*
+            - !Sub arn:aws:s3::${AcastAccountNumber}:logstash-cdnlog/*
             Effect: Allow
   Lambda:
     Type: AWS::Lambda::Function
