@@ -2,8 +2,9 @@ package com.gu.contentapi
 
 object Config {
 
-  val AudioLogsBucketName = "fastly-logs-audio"
+  val FastlyAudioLogsBucketName = "fastly-logs-audio"
 
   val capiKey = sys.env("CAPI_KEY")
+  val AcastAudioLogsBucketName = "acast-logs-audio"
 
 }
