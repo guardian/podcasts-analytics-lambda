@@ -40,6 +40,8 @@ Resources:
             - arn:aws:s3::*:content-api-dist/*
             - arn:aws:s3::*:fastly-logs-audio
             - arn:aws:s3::*:fastly-logs-audio/*
+            - arn:aws:s3::*:acast-logs-audio
+            - arn:aws:s3::*:acast-logs-audio/*
             Effect: Allow
   Lambda:
     Type: AWS::Lambda::Function
