@@ -11,7 +11,7 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.8.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
-  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.13",
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.133",
   "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
   "com.github.melrief" %% "purecsv" % "0.0.6",
   "com.gu" %% "content-api-client" % "10.15",
