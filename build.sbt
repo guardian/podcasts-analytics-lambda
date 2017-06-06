@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.133",
   "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
-  "com.github.melrief" %% "purecsv" % "0.0.6",
+  "com.github.melrief" %% "purecsv" % "0.0.9",
   "com.gu" %% "content-api-client" % "10.15",
   "com.squareup.okhttp3" % "okhttp" % "3.4.1",
   "net.openhft" % "zero-allocation-hashing" % "0.6",
