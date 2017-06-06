@@ -9,8 +9,6 @@ object Ophan {
   private val client = new OkHttpClient()
   private val OphanUrl = "https://ophan.theguardian.com/i.gif"
 
-  //TODO handle time when the event has been received
-
   def send(events: Seq[Event]): Unit = {
     events foreach { e =>
       Thread.sleep(270000 / events.length) /* send events over a period of 4 minutes and 30 seconds */
