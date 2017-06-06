@@ -6,6 +6,10 @@ Parameters:
     Description: Environment name
     Type: String
     Default: PROD
+  ContentApiKey:
+    Description: The Content API key
+    Type: String
+    NoEcho: true
 Resources:
   RootRole:
     Type: AWS::IAM::Role
@@ -40,6 +44,8 @@ Resources:
             - arn:aws:s3::*:content-api-dist/*
             - arn:aws:s3::*:fastly-logs-audio
             - arn:aws:s3::*:fastly-logs-audio/*
+            - arn:aws:s3::*:acast-logs-audio
+            - arn:aws:s3::*:acast-logs-audio/*
             Effect: Allow
   Lambda:
     Type: AWS::Lambda::Function
@@ -54,6 +60,9 @@ Resources:
             - podcasts-analytics-lambda
             - podcasts-analytics-lambda.zip
       Description: CAPI podcasts analytics lambda
+      Environment:
+        Variables:
+          CAPI_KEY: !Ref ContentApiKey
       Handler: com.gu.contentapi.Lambda::handleRequest
       MemorySize: 256
       Role:
