@@ -109,4 +109,44 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     )))
   }
 
+  val acastLog2 = AcastLog(
+    timestamp = "2017-05-29T11:00:06.000Z",
+    bytes = "18195051",
+    range = "-",
+    ipAddress = "217.42.5.77",
+    request = "GET",
+    url = "/stitch1/2017/05/guardian-science/the-bell-beaker-folk-science-weekly-podcast/7g49LLBQMKaqWB-FvDHpFw.mp3",
+    status = "206",
+    referrer = "-",
+    userAgent = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)",
+    query = "ci=c1859bb5-4cd3-47ff-adeb-f0ab3b999f1e&aid=4b866423-bbd8-49b7-87e0-d53c883b6ea5&chid=dcd5264b-a4bc-4fc6-a7d7-23500e04fffd&st=5rYBLVWUGQei6khP3xD33g&e=1496070746&filename=The-Guardians-Science-Weekly-The-Bell-Beaker-folk-Science-Weekly-podcast.mp3",
+    host = "ads-creative-cdn.acast.com",
+    forwardedFor = "-",
+    cloudfrontResultType = "Hit",
+    cloudfrontResponseResultType = "Hit",
+    cloudfrontRequestId = "PRr0SRHyeN0RCw1jzZWpW5iwPO8fH37Xu9OChM17LwqK5YBtb2UdFw==",
+    city = "Durham",
+    country = "United Kingdom",
+    countryCode = "GB",
+    region = "DUR",
+    continentCode = "EU",
+    dmaCode = "0",
+    postalCode = "DH9",
+    longitude = "-1.7383",
+    latitude = "54.8575",
+    filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3")
+  )
+
+  it should "Convert a acast log with a filename to an event ready to be sent to Ophan" in {
+
+    Event(acastLog2) should be(Some(Event(
+      viewId = "PRr0SRHyeN0RCw1jzZWpW5iwPO8fH37Xu9OChM17LwqK5YBtb2UdFw==",
+      url = "https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3",
+      ipAddress = "217.42.5.77",
+      episodeId = "https://www.theguardian.com/science/audio/2017/may/28/the-bell-beaker-folk-science-weekly-podcast",
+      podcastId = "https://www.theguardian.com/science/series/science",
+      ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)"
+    )))
+  }
+
 }

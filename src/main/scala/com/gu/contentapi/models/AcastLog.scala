@@ -143,7 +143,8 @@ case class AcastLog(
   dmaCode: String,
   postalCode: String,
   longitude: String,
-  latitude: String
+  latitude: String,
+  filename: Option[String] = None
 )
 
 object AcastLog {
