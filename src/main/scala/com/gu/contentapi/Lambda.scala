@@ -57,17 +57,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
       val downloadsLogs = allAcastLogs.filter(AcastLog.onlyDownloads && AcastLog.onlySuccessfulReponses)
 
-      /**
-       *
-       * Do not send event yet just print them for testing
-       *
-       * Ophan.send(downloadsLogs.flatMap(Event(_)))
-       */
-      val events = downloadsLogs.flatMap(Event(_))
-      for (event <- events) {
-        println("Acast event")
-        println(event)
-      }
+      Ophan.send(downloadsLogs.flatMap(Event(_)))
     }
   }
 
