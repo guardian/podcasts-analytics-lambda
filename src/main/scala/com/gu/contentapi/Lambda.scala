@@ -26,7 +26,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
     handleReportsFromFastly(fastlyReportObjects)
 
-    handleReportsFromAcast(fastlyReportObjects)
+    handleReportsFromAcast(acastReportObjects)
 
     println(s"Cache hits: ${PodcastLookup.cacheHits}")
     println(s"Cache misses: ${PodcastLookup.cacheMisses}")
