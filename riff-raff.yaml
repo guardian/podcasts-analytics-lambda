@@ -1,0 +1,14 @@
+stacks:
+- content-api-podcasts-analytics
+deployments:
+  podcasts-analytics-lambda:
+    parameters:
+      bucket: content-api-dist
+      fileName: podcasts-analytics-lambda.zip
+      functions:
+        PROD:
+          filename: podcasts-analytics-lambda.zip
+          name: podcasts-analytics-lambda-PROD-Lambda-UQMPL25PEG6O
+    type: aws-lambda
+regions:
+- eu-west-1
