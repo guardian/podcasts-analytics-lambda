@@ -25,7 +25,6 @@ packageName in Universal := normalizedName.value
 
 def env(key: String): Option[String] = Option(System.getenv(key))
 
-riffRaffPackageName := "podcasts-analytics-lambda"
 riffRaffPackageType := (packageBin in Universal).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
