@@ -184,5 +184,8 @@ object AcastLog {
   /* filter out error reponses */
   val onlySuccessfulReponses: AcastLog => Boolean = { log => log.cloudfrontResponseResultType == "Hit" || log.cloudfrontResponseResultType == "RefreshHit" || log.cloudfrontResponseResultType == "Miss" }
 
+  /* filter out HEAD and any non GET requests */
+  val onlyGet: AcastLog => Boolean = { log => log.request == "GET" }
+
 }
 

@@ -67,6 +67,17 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
   }
 
+  it should "When converting a FastlyLog to an Event, it should filter out all the HEAD requests" in {
+
+    val fastlyLog2 = fastlyLog1.copy(request = "HEAD")
+
+    val logs: Seq[FastlyLog] = List(fastlyLog1, fastlyLog2)
+
+    val events = logs.filter(FastlyLog.onlyGet).flatMap(Event(_))
+
+    events.length should be(1)
+  }
+
   val acastLog1 = AcastLog(
     timestamp = "2017-05-18T07:18:00.000Z",
     bytes = "26940335",
@@ -140,6 +151,17 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       episodeId = "https://www.theguardian.com/science/audio/2017/may/28/the-bell-beaker-folk-science-weekly-podcast",
       podcastId = "https://www.theguardian.com/science/series/science",
       ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)")))
+  }
+
+  it should "When converting a AcastLog to an Event, it should filter out all the HEAD requests" in {
+
+    val acastLog3 = acastLog2.copy(request = "HEAD")
+
+    val logs: Seq[AcastLog] = List(acastLog1, acastLog2, acastLog3)
+
+    val events = logs.filter(AcastLog.onlyGet).flatMap(Event(_))
+
+    events.length should be(2)
   }
 
 }
