@@ -20,8 +20,7 @@ case class FastlyLog(
   countryCode: String,
   region: String,
   city: String,
-  location: String
-)
+  location: String)
 
 object FastlyLog {
 
@@ -46,6 +45,9 @@ object FastlyLog {
 
   /* filter out partial content requests */
   val onlyDownloads: FastlyLog => Boolean = { log => log.status != "206" }
+
+  /* filter out HEAD and any non GET requests */
+  val onlyGet: FastlyLog => Boolean = { log => log.request == "GET" }
 
 }
 

@@ -33,8 +33,7 @@ class FastlyParsingSpec extends FlatSpec with Matchers with OptionValues {
       countryCode = "US",
       region = "MI",
       city = "Ypsilanti",
-      location = ""
-    )
+      location = "")
     firstPw should be(pageViews.head)
 
     val secondPw = FastlyLog(
@@ -54,8 +53,7 @@ class FastlyParsingSpec extends FlatSpec with Matchers with OptionValues {
       countryCode = "IE",
       region = "07",
       city = "Dublin",
-      location = ""
-    )
+      location = "")
     secondPw should be(pageViews(1))
 
     val thirdPw = FastlyLog(
@@ -75,8 +73,7 @@ class FastlyParsingSpec extends FlatSpec with Matchers with OptionValues {
       countryCode = "GB",
       region = "A2",
       city = "Hendon",
-      location = ""
-    )
+      location = "")
     thirdPw should be(pageViews(2))
   }
 

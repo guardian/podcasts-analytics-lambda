@@ -10,8 +10,7 @@ case class Event(
   episodeId: String,
   podcastId: String,
   ua: String,
-  platform: Option[String] = None
-)
+  platform: Option[String] = None)
 
 object Event {
 
@@ -31,8 +30,7 @@ object Event {
         episodeId = info.episodeId,
         podcastId = info.podcastId,
         ua = fastlyLog.userAgent,
-        platform = Option(parsedUrl.queryParameter("platform"))
-      )
+        platform = Option(parsedUrl.queryParameter("platform")))
     }
   }
 

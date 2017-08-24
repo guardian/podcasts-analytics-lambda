@@ -63,7 +63,7 @@ If the viewer did not use an HTTP proxy or a load balancer, the value of x-forwa
 
 x-edge-result-type
 ------------------
-  
+
 How CloudFront classifies the response after the last byte left the edge location. In some cases, the result type can change between the time that CloudFront is ready to send the response and the time that CloudFront has finished sending the response. For example, in HTTP streaming, suppose CloudFront finds a segment in the edge cache. The value of x-edge-response-result-type, the result type immediately before CloudFront begins to respond to the request, is Hit. However, if the user closes the viewer before CloudFront has delivered the entire segment, the final result type—the value of x-edge-result-type—changes to Error.
 
 Possible values include:
@@ -115,7 +115,7 @@ continent code
 dma code
 postal_code
 longitude
-latitude 
+latitude
 
 */
 
@@ -144,8 +144,7 @@ case class AcastLog(
   postalCode: String,
   longitude: String,
   latitude: String,
-  filename: Option[String] = None
-)
+  filename: Option[String] = None)
 
 object AcastLog {
 
@@ -184,6 +183,9 @@ object AcastLog {
 
   /* filter out error reponses */
   val onlySuccessfulReponses: AcastLog => Boolean = { log => log.cloudfrontResponseResultType == "Hit" || log.cloudfrontResponseResultType == "RefreshHit" || log.cloudfrontResponseResultType == "Miss" }
+
+  /* filter out HEAD and any non GET requests */
+  val onlyGet: AcastLog => Boolean = { log => log.request == "GET" }
 
 }
 

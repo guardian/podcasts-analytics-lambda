@@ -29,5 +29,3 @@ riffRaffPackageType := (packageBin in Universal).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Off-platform::${name.value}"
-
-assemblySettings

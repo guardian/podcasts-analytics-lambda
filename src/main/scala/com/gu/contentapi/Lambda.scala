@@ -40,7 +40,9 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
         FastlyLog(line)
       }
 
-      val downloadsLogs = allFastlyLogs.filter(FastlyLog.onlyDownloads)
+      import com.gu.contentapi.utils.PredicateUtils._
+
+      val downloadsLogs = allFastlyLogs.filter(FastlyLog.onlyDownloads && FastlyLog.onlyGet)
 
       Ophan.send(downloadsLogs.flatMap(Event(_)))
     }
@@ -55,7 +57,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
       import com.gu.contentapi.utils.PredicateUtils._
 
-      val downloadsLogs = allAcastLogs.filter(AcastLog.onlyDownloads && AcastLog.onlySuccessfulReponses)
+      val downloadsLogs = allAcastLogs.filter(AcastLog.onlyDownloads && AcastLog.onlySuccessfulReponses && AcastLog.onlyGet)
 
       Ophan.send(downloadsLogs.flatMap(Event(_)))
     }
