@@ -23,8 +23,7 @@ object PodcastLookup extends StrictLogging {
   case class PodcastInfo(
     episodeId: String,
     podcastId: String,
-    absoluteUrl: Option[String] = None
-  )
+    absoluteUrl: Option[String] = None)
 
   val cache = TrieMap[String, PodcastInfo]()
   var cacheHits = 0
@@ -65,8 +64,7 @@ object PodcastLookup extends StrictLogging {
             }
           }
           case FailedQuery(err) => None
-        }, 2.seconds
-      )
+        }, 2.seconds)
     }
   }
 
@@ -111,8 +109,7 @@ object PodcastLookup extends StrictLogging {
             }
           }
           case FailedQuery(err) => None
-        }, 2.seconds
-      )
+        }, 2.seconds)
     }
   }
 

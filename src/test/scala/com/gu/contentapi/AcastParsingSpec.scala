@@ -42,8 +42,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
       postalCode = "DH9",
       longitude = "-1.7383",
       latitude = "54.8575",
-      filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3")
-    )
+      filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3"))
     downloads.head should be(first)
 
     val second = AcastLog(
@@ -71,8 +70,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
       postalCode = "00126",
       longitude = "12.4833",
       latitude = "41.9",
-      filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3")
-    )
+      filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3"))
     downloads(1) should be(second)
 
     val third = AcastLog(
@@ -100,8 +98,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
       postalCode = "6000",
       longitude = "115.8621",
       latitude = "-31.9674",
-      filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3")
-    )
+      filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3"))
     downloads(2) should be(third)
 
   }

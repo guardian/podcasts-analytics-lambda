@@ -24,8 +24,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     countryCode = "US",
     region = "MI",
     city = "Ypsilanti",
-    location = ""
-  )
+    location = "")
 
   it should "Convert a fastly log to an event ready to be sent to Ophan" in {
 
@@ -35,8 +34,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       ipAddress = "66.87.114.159",
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
       podcastId = "https://www.theguardian.com/football/series/footballweekly",
-      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
-    )))
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)")))
   }
 
   it should "Convert a fastly log and handling platform parameter correctly" in {
@@ -50,8 +48,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
       podcastId = "https://www.theguardian.com/football/series/footballweekly",
       ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)",
-      platform = Some("amazon-echo")
-    )))
+      platform = Some("amazon-echo"))))
   }
 
   it should "When converting a FastlyLog to an Event, it should filter out all the 206 partial content statuses" in {
@@ -94,8 +91,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     dmaCode = "0",
     postalCode = "00126",
     longitude = "12.4833",
-    latitude = "41.9"
-  )
+    latitude = "41.9")
 
   it should "Convert a acast log to an event ready to be sent to Ophan" in {
 
@@ -105,8 +101,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       ipAddress = "87.7.235.91",
       episodeId = "https://www.theguardian.com/science/audio/2017/may/14/science-weekly-can-we-cure-alzheimers-podcast",
       podcastId = "https://www.theguardian.com/science/series/science",
-      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)"
-    )))
+      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)")))
   }
 
   val acastLog2 = AcastLog(
@@ -134,8 +129,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     postalCode = "DH9",
     longitude = "-1.7383",
     latitude = "54.8575",
-    filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3")
-  )
+    filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3"))
 
   it should "Convert a acast log with a filename to an event ready to be sent to Ophan" in {
 
@@ -145,8 +139,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       ipAddress = "217.42.5.77",
       episodeId = "https://www.theguardian.com/science/audio/2017/may/28/the-bell-beaker-folk-science-weekly-podcast",
       podcastId = "https://www.theguardian.com/science/series/science",
-      ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)"
-    )))
+      ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)")))
   }
 
 }

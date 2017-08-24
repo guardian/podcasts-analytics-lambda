@@ -13,8 +13,7 @@ class OphanSpec extends FlatSpec with Matchers with OptionValues {
       ipAddress = "66.87.114.159",
       episodeId = "https://www.theguardian.com/football/audio/2016/nov/10/gordon-strachans-last-stand-with-scotland-football-weekly-extra",
       podcastId = "https://www.theguardian.com/football/series/footballweekly",
-      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)"
-    )
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)")
     //    Ophan.send(ev)
   }
 

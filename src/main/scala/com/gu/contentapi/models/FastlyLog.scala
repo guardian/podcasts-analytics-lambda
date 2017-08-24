@@ -20,8 +20,7 @@ case class FastlyLog(
   countryCode: String,
   region: String,
   city: String,
-  location: String
-)
+  location: String)
 
 object FastlyLog {
 
