@@ -58,12 +58,13 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     val logsGrouped = logs.groupBy(f => f.status).mapValues(_.length)
 
     logsGrouped.get("206").value should be(71)
+
     logsGrouped.get("200").value should be(12)
     logsGrouped.get("304").value should be(3)
 
     val events = logs.filter(FastlyLog.onlyDownloads).flatMap(Event(_))
 
-    events.length should be(15)
+    events.length should be(41)
 
   }
 
@@ -162,6 +163,28 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     val events = logs.filter(AcastLog.onlyGet).flatMap(Event(_))
 
     events.length should be(2)
+  }
+
+  it should "When converting a AcastLog to an Event, it should not filter out  206 requests starting with 0" in {
+
+    val acastLog3 = acastLog1.copy(status = "206", range = "0-235")
+
+    val logs: Seq[AcastLog] = List(acastLog1, acastLog3)
+
+    val events = logs.filter(AcastLog.onlyDownloads).flatMap(Event(_))
+
+    events.length should be(2)
+  }
+
+  it should "When converting a AcastLog to an Event, it should  filter out  206 requests starting with a number higher than 0 " in {
+
+    val acastLog3 = acastLog1.copy(status = "206", range = "12-235")
+
+    val logs: Seq[AcastLog] = List(acastLog1, acastLog3)
+
+    val events = logs.filter(AcastLog.onlyDownloads).flatMap(Event(_))
+
+    events.length should be(1)
   }
 
 }
