@@ -44,7 +44,7 @@ object FastlyLog {
   val cleanLog: String => Option[String] = removeFastlyFootprint _ andThen makeCsvLike andThen replaceNullElements
 
   /* filter out partial content requests */
-  val onlyDownloads: FastlyLog => Boolean = { log => log.status != "206" }
+  val onlyDownloads: FastlyLog => Boolean = { log => log.status != "206" || log.range.startsWith("bytes=0-") }
 
   /* filter out HEAD and any non GET requests */
   val onlyGet: FastlyLog => Boolean = { log => log.request == "GET" }

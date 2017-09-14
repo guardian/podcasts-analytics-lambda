@@ -178,8 +178,8 @@ object AcastLog {
     decodingMap.foldLeft(encoded) { case (cur, (from, to)) => cur.replaceAll(from, to) }
   }
 
-  /* filter out partial content requests */
-  val onlyDownloads: AcastLog => Boolean = { log => log.status != "206" }
+  /* filter out partial content requests that are not starting from 0 byte */
+  val onlyDownloads: AcastLog => Boolean = { log => log.status != "206" || log.range.startsWith("0-") }
 
   /* filter out error reponses */
   val onlySuccessfulReponses: AcastLog => Boolean = { log => log.cloudfrontResponseResultType == "Hit" || log.cloudfrontResponseResultType == "RefreshHit" || log.cloudfrontResponseResultType == "Miss" }
