@@ -1,8 +1,8 @@
 package com.gu.contentapi.services
 
-import okhttp3.{ OkHttpClient, Request }
+import okhttp3.{OkHttpClient, Request}
 import com.gu.contentapi.models.Event
-import com.gu.contentapi.utils.{ Encoding }
+import com.gu.contentapi.utils.Encoding
 
 object Ophan {
 
@@ -26,8 +26,9 @@ object Ophan {
     val PodcastId = Encoding.encodeURIComponent(event.podcastId)
     val UserAgent = Encoding.encodeURIComponent(event.ua)
     val Platform = event.platform.map(Encoding.encodeURIComponent)
+    val BrowserId = event.viewId + "-bwid"
 
-    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent" + Platform.map(p => "&platform=" + p).getOrElse("")
+    val url = s"$OphanUrl?url=$Url&viewId=${event.viewId}&bwid=$BrowserId&isForwarded=true&ipAddress=$IpAddress&episodeId=$EpisodeId&podcastId=$PodcastId&ua=$UserAgent" + Platform.map(p => "&platform=" + p).getOrElse("")
 
     val request = new Request.Builder().url(url).build()
 
