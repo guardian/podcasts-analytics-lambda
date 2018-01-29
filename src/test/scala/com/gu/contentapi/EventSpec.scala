@@ -167,6 +167,19 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)")))
   }
 
+  it should "Convert a acast log with a filename containing an space" in {
+
+    val acastLog3 = acastLog2.copy(filename = Some("https://audio.guim.co.uk/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3"))
+
+    Event(acastLog3) should be(Some(Event(
+      viewId = "PRr0SRHyeN0RCw1jzZWpW5iwPO8fH37Xu9OChM17LwqK5YBtb2UdFw==",
+      url = "https://audio.guim.co.uk/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3",
+      ipAddress = "217.42.5.77",
+      episodeId = "https://www.theguardian.com/small-business-network/audio/2018/jan/10/bedroom-business-to-world-domination-meet-the-mentors-with-trunkis-rob-law-podcast",
+      podcastId = "https://www.theguardian.com/business/series/the-business-podcast",
+      ua = "AppleCoreMedia/1.0.0.14E304 (iPhone; U; CPU OS 10_3_1 like Mac OS X; en_gb)")))
+  }
+
   it should "When converting a AcastLog to an Event, it should filter out all the HEAD requests" in {
 
     val acastLog3 = acastLog2.copy(request = "HEAD")

@@ -14,8 +14,8 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
     val downloads: Seq[AcastLog] = lines flatMap { line => AcastLog(line) }
 
-    lines.length should be(3)
-    downloads.length should be(3)
+    lines.length should be(4)
+    downloads.length should be(4)
 
     val first = AcastLog(
       timestamp = "2017-05-29T11:00:06.000Z",
@@ -100,6 +100,34 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
       latitude = "-31.9674",
       filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3"))
     downloads(2) should be(third)
+
+    val fourth = AcastLog(
+      timestamp = "2017-05-18T07:18:13.000Z",
+      bytes = "26969867",
+      range = "-",
+      ipAddress = "101.186.58.250",
+      request = "GET",
+      url = "/encoded/dcd5264b-a4bc-4fc6-a7d7-23500e04fffd/9f9a7fd1-6f8c-41dc-bb9c-bac2b7d5b31c/encoded-0a2236c4665171be111f0bd8254e29e7-128.mp3",
+      status = "206",
+      referrer = "-",
+      userAgent = "AppleCoreMedia/1.0.0.14D27 (iPhone; U; CPU OS 10_2_1 like Mac OS X; en_gb)",
+      query = "ci=991ebf3d-15cf-4c8f-9359-2f4cd40880f3&aid=9f9a7fd1-6f8c-41dc-bb9c-bac2b7d5b31c&chid=dcd5264b-a4bc-4fc6-a7d7-23500e04fffd&st=2__Gg6W_YexJ3eSCmTnAJA&e=1495107145&filename=The-Guardians-Science-Weekly-Science-weekly-can-we-cure-Alzheimers-podcast.mp3",
+      host = "mediacdn.acast.com",
+      forwardedFor = "-",
+      cloudfrontResultType = "Hit",
+      cloudfrontResponseResultType = "Hit",
+      cloudfrontRequestId = "i5cq2cAbWqkeCGwYVN0Ss-hmgxjaA4bH43OoEzEzdFvDdlDdJ1wjYA==",
+      city = "Perth",
+      country = "Australia",
+      countryCode = "AU",
+      region = "WA",
+      continentCode = "OC",
+      dmaCode = "0",
+      postalCode = "6000",
+      longitude = "115.8621",
+      latitude = "-31.9674",
+      filename = Some("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly .alzheimers.mp3"))
+    downloads(3) should be(fourth)
 
   }
 
