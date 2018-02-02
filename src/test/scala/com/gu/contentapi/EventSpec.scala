@@ -51,6 +51,19 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       platform = Some("amazon-echo"))))
   }
 
+  it should "Convert a fastly log whith empty space in filename" in {
+
+    val fastlyLog3 = fastlyLog1.copy(url = "/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3")
+
+    Event(fastlyLog3) should be(Some(Event(
+      viewId = "8813254641924280511",
+      url = "https://audio.guim.co.uk/2018/01/09-50280-01%20gnl.business.20180109.candb.goingglobal.mp3",
+      ipAddress = "66.87.114.159",
+      episodeId = "https://www.theguardian.com/small-business-network/audio/2018/jan/10/bedroom-business-to-world-domination-meet-the-mentors-with-trunkis-rob-law-podcast",
+      podcastId = "https://www.theguardian.com/business/series/the-business-podcast",
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)")))
+  }
+
   it should "When converting a FastlyLog to an Event, it should filter out all the 206 partial content statuses" in {
 
     val logs: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line => FastlyLog(line) }
