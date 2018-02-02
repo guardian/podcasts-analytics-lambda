@@ -22,7 +22,9 @@ object Event {
     val path = parsedUrl.encodedPath()
     val absoluteUrlToFile = hostUrl + path
 
-    PodcastLookup.getPodcastInfo(absoluteUrlToFile) map { info =>
+    val decodedUrl = java.net.URLDecoder.decode(absoluteUrlToFile, "UTF-8")
+
+    PodcastLookup.getPodcastInfo(decodedUrl) map { info =>
       Event(
         viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time + fastlyLog.ipAddress + fastlyLog.userAgent).toString,
         url = absoluteUrlToFile,
