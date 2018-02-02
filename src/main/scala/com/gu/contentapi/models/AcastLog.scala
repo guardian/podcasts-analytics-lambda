@@ -152,7 +152,7 @@ object AcastLog {
 
     val log = CSVReader[AcastLog].readCSVFromString(line).headOption
     val parsedLog = log collect { case Success(parsedLog) => parsedLog }
-    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent)))
+    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = l.filename.map(decode)))
   }
 
   val decodingMap = ListMap(
