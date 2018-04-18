@@ -122,11 +122,11 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
     Event(acastLog1) should be(Some(Event(
       viewId = "5AC0OQv86ccuUcBhYhaMw1-WRPri8BaptTAAermlanefKXVN-YyJoQ==",
-      url = "https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3",
+      url = "https://audio.guim.co.uk/2018/03/30-33058-gnl.sci.180330.sf.the_natural_selection_of_bad_science.mp3",
       ipAddress = "87.7.235.91",
-      episodeId = "https://www.theguardian.com/science/audio/2017/may/14/science-weekly-can-we-cure-alzheimers-podcast",
+      episodeId = "https://www.theguardian.com/science/audio/2018/mar/30/the-trouble-with-science-science-weekly-podcast",
       podcastId = "https://www.theguardian.com/science/series/science",
-      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)")))
+      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)", None)))
   }
 
   val acastLog2 = AcastLog(

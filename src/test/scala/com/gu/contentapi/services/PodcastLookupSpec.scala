@@ -17,8 +17,8 @@ class PodcastLookupSpec extends FlatSpec with Matchers with OptionValues {
     val info = PodcastLookup.getPodcastInfoFromQuery("Science-Weekly-Science-weekly-can-we-cure-Alzheimers-podcast")
 
     info.get.podcastId should be("https://www.theguardian.com/science/series/science")
-    info.get.episodeId should be("https://www.theguardian.com/science/audio/2017/may/14/science-weekly-can-we-cure-alzheimers-podcast")
-    info.get.absoluteUrl.get should be("https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3")
+    info.get.episodeId should be("https://www.theguardian.com/science/audio/2018/mar/30/the-trouble-with-science-science-weekly-podcast")
+    info.get.absoluteUrl.get should be("https://audio.guim.co.uk/2018/03/30-33058-gnl.sci.180330.sf.the_natural_selection_of_bad_science.mp3")
   }
 
 }
