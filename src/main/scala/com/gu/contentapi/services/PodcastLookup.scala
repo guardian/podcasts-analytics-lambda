@@ -2,7 +2,7 @@ package com.gu.contentapi.services
 
 import com.gu.contentapi.client._
 import com.gu.contentapi.client.model.v1.{ SearchResponse, Tag }
-import com.gu.contentapi.client.model.SearchQuery
+import com.gu.contentapi.client.model.{ SearchQuery, ContentApiError }
 import com.typesafe.scalalogging.StrictLogging
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, Future }
@@ -40,7 +40,7 @@ object PodcastLookup extends StrictLogging {
         case _ => FailedQuery(s"Failed query for filePath: $filePath")
       }
     } recover {
-      case GuardianContentApiError(status, msg, _) =>
+      case ContentApiError(status, msg, _) =>
         FailedQuery(s"Received unexpected response from CAPI: status $status with message $msg")
     }
   }
@@ -82,7 +82,7 @@ object PodcastLookup extends StrictLogging {
         case _ => FailedQuery(s"Failed query for q: $q")
       }
     } recover {
-      case GuardianContentApiError(status, msg, _) =>
+      case ContentApiError(status, msg, _) =>
         FailedQuery(s"Received unexpected response from CAPI: status $status with message $msg")
     }
   }
