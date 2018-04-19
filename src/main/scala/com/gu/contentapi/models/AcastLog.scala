@@ -178,8 +178,8 @@ object AcastLog {
     decodingMap.foldLeft(encoded) { case (cur, (from, to)) => cur.replaceAll(from, to) }
   }
 
-  /* filter out partial content requests that are not starting from 0 byte */
-  val allowedRangePattern = """0-(?!1$)""".r
+  /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
+  val allowedRangePattern = """^0-(?!1$)""".r
   val onlyDownloads: AcastLog => Boolean = log =>
     log.status != "206" || allowedRangePattern.findFirstIn(log.range).nonEmpty
 

@@ -191,7 +191,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     events.length should be(2)
   }
 
-  it should "When converting a AcastLog to an Event, it should not filter out  206 requests starting with 0 and not ending with 1" in {
+  it should "When converting a AcastLog to an Event, it should filter out 206 requests unless the byte-range starts from 0 and is not 0-1" in {
 
     val acastLog3 = acastLog1.copy(status = "206", range = "0-235")
     val acastLog4 = acastLog1.copy(status = "206", range = "0-1")
