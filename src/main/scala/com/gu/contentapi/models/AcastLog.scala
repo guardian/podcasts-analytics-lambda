@@ -179,7 +179,9 @@ object AcastLog {
   }
 
   /* filter out partial content requests that are not starting from 0 byte */
-  val onlyDownloads: AcastLog => Boolean = { log => log.status != "206" || log.range.startsWith("0-") }
+  val allowedRangePattern = """0-(?!1$)""".r
+  val onlyDownloads: AcastLog => Boolean = log =>
+    log.status != "206" || allowedRangePattern.findFirstIn(log.range).nonEmpty
 
   /* filter out error reponses */
   val onlySuccessfulReponses: AcastLog => Boolean = { log => log.cloudfrontResponseResultType == "Hit" || log.cloudfrontResponseResultType == "RefreshHit" || log.cloudfrontResponseResultType == "Miss" }
