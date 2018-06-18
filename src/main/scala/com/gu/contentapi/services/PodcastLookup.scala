@@ -64,7 +64,7 @@ object PodcastLookup extends StrictLogging {
             }
           }
           case FailedQuery(err) => None
-        }, 2.seconds)
+        }, 5.seconds)
     }
   }
 
