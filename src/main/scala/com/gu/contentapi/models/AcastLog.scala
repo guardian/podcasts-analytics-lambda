@@ -152,7 +152,7 @@ object AcastLog {
 
     val log = CSVReader[AcastLog].readCSVFromString(line).headOption
     val parsedLog = log collect { case Success(parsedLog) => parsedLog }
-    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = l.filename.map(decode)))
+    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = l.filename.flatMap(processFileName)))
   }
 
   val decodingMap = ListMap(
@@ -173,6 +173,10 @@ object AcastLog {
     "%2520" -> " ",
     "%25" -> "%" /* should be the last to not override with %25XX */
   )
+
+  private def processFileName(fileName: String): Option[String] =
+    if (fileName != "-") Some(decode(fileName))
+    else None
 
   private def decode(encoded: String): String = {
     decodingMap.foldLeft(encoded) { case (cur, (from, to)) => cur.replaceAll(from, to) }
