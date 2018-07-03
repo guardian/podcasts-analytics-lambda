@@ -64,7 +64,7 @@ Resources:
         Variables:
           CAPI_KEY: !Ref ContentApiKey
       Handler: com.gu.contentapi.Lambda::handleRequest
-      MemorySize: 512
+      MemorySize: 320
       Role:
         Fn::GetAtt:
         - RootRole
