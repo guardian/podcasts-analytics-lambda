@@ -10,6 +10,9 @@ Parameters:
     Description: The Content API key
     Type: String
     NoEcho: true
+  AlarmSnsTopic:
+    Description: Alarm SNS topic
+    Type: String
 Resources:
   RootRole:
     Type: AWS::IAM::Role
@@ -72,3 +75,39 @@ Resources:
         - Arn
       Runtime: java8
       Timeout: 300
+  InvocationAlarm:
+    Type: AWS::Cloudwatch::Alarm
+    Properties:
+      AlarmName: InvocationAlarm
+      AlarmDescription: Alarm when invocation count below 200/hour
+      Namespace: AWS/Lambda
+      MetricName: Invocations
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            !Ref Lambda
+      Statistic: Sum
+      ComparisonOperator: LessThanThreshold
+      Threshold: 200
+      Period: 60
+      EvaluationPeriods: 1
+      AlarmActions:
+        !Ref AlarmSnsTopic
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ErrorAlarm
+      AlarmDescription: Alarm if the Lambda fails with an error
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            !Ref Lambda
+      Statistic: Sum
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      Period: 60
+      EvaluationPeriods: 1
+      AlarmActions:
+        - !Ref AlarmSnsTopic
