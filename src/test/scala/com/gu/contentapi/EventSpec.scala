@@ -118,17 +118,6 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     longitude = "12.4833",
     latitude = "41.9")
 
-  it should "Convert a acast log to an event ready to be sent to Ophan" in {
-
-    Event(acastLog1) should be(Some(Event(
-      viewId = "5AC0OQv86ccuUcBhYhaMw1-WRPri8BaptTAAermlanefKXVN-YyJoQ==",
-      url = "https://audio.guim.co.uk/2018/03/30-33058-gnl.sci.180330.sf.the_natural_selection_of_bad_science.mp3",
-      ipAddress = "87.7.235.91",
-      episodeId = "https://www.theguardian.com/science/audio/2018/mar/30/the-trouble-with-science-science-weekly-podcast",
-      podcastId = "https://www.theguardian.com/science/series/science",
-      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)", None)))
-  }
-
   val acastLog2 = AcastLog(
     timestamp = "2017-05-29T11:00:06.000Z",
     bytes = "18195051",
