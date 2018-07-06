@@ -116,18 +116,8 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     dmaCode = "0",
     postalCode = "00126",
     longitude = "12.4833",
-    latitude = "41.9")
-
-  it should "Convert a acast log to an event ready to be sent to Ophan" in {
-
-    Event(acastLog1) should be(Some(Event(
-      viewId = "5AC0OQv86ccuUcBhYhaMw1-WRPri8BaptTAAermlanefKXVN-YyJoQ==",
-      url = "https://audio.guim.co.uk/2018/03/30-33058-gnl.sci.180330.sf.the_natural_selection_of_bad_science.mp3",
-      ipAddress = "87.7.235.91",
-      episodeId = "https://www.theguardian.com/science/audio/2018/mar/30/the-trouble-with-science-science-weekly-podcast",
-      podcastId = "https://www.theguardian.com/science/series/science",
-      ua = "Mozilla/5.0 (Linux; U; en-us; BeyondPod 4)", None)))
-  }
+    latitude = "41.9",
+    filename = "https://audio.guim.co.uk/2017/05/12-48386-gnl.rs.20170521.scienceweekly.alzheimers.mp3")
 
   val acastLog2 = AcastLog(
     timestamp = "2017-05-29T11:00:06.000Z",
@@ -154,7 +144,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
     postalCode = "DH9",
     longitude = "-1.7383",
     latitude = "54.8575",
-    filename = Some("https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3"))
+    filename = "https://audio.guim.co.uk/2017/05/26-52950-gdn.sci.20170526.gj.ancientgenomes.mp3")
 
   it should "Convert a acast log with a filename to an event ready to be sent to Ophan" in {
 
@@ -169,7 +159,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
   it should "Convert a acast log with a filename containing an space" in {
 
-    val acastLog3 = acastLog2.copy(filename = Some("https://audio.guim.co.uk/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3"))
+    val acastLog3 = acastLog2.copy(filename = "https://audio.guim.co.uk/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3")
 
     Event(acastLog3) should be(Some(Event(
       viewId = "PRr0SRHyeN0RCw1jzZWpW5iwPO8fH37Xu9OChM17LwqK5YBtb2UdFw==",

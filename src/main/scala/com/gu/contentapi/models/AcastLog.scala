@@ -144,7 +144,7 @@ case class AcastLog(
   postalCode: String,
   longitude: String,
   latitude: String,
-  filename: Option[String] = None)
+  filename: String)
 
 object AcastLog {
 
@@ -152,7 +152,7 @@ object AcastLog {
 
     val log = CSVReader[AcastLog].readCSVFromString(line).headOption
     val parsedLog = log collect { case Success(parsedLog) => parsedLog }
-    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = l.filename.map(decode)))
+    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = decode(l.filename)))
   }
 
   val decodingMap = ListMap(

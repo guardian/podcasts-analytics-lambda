@@ -36,46 +36,16 @@ object Event {
     }
   }
 
-  def apply(acastLog: AcastLog): Option[Event] = {
-
-    if (acastLog.filename.isDefined) {
-      val absoluteUrlToFile = acastLog.filename.get
-      PodcastLookup.getPodcastInfo(absoluteUrlToFile) map { info =>
-        Event(
-          viewId = acastLog.cloudfrontRequestId,
-          url = absoluteUrlToFile,
-          ipAddress = acastLog.ipAddress,
-          episodeId = info.episodeId,
-          podcastId = info.podcastId,
-          ua = acastLog.userAgent,
-          platform = None // TODO investigate if we could retrieved it from acastLog.query
-        )
-      }
-    } else {
-
-      val filenameRaw = acastLog.query.split("&filename=").toList.lift(1)
-
-      val withoutPrefix: String => String = { s => if (s.startsWith("The-Guardians-")) s.substring(14, s.length) else s }
-      val withoutSuffix: String => String = { s => if (s.endsWith(".mp3")) s.substring(0, s.length - 4) else s }
-      val reduce = withoutPrefix andThen withoutSuffix
-
-      for {
-        filename <- filenameRaw.map(reduce)
-        info <- PodcastLookup.getPodcastInfoFromQuery(filename)
-        absoluteUrlToFile <- info.absoluteUrl
-      } yield {
-        Event(
-          viewId = acastLog.cloudfrontRequestId,
-          url = absoluteUrlToFile,
-          ipAddress = acastLog.ipAddress,
-          episodeId = info.episodeId,
-          podcastId = info.podcastId,
-          ua = acastLog.userAgent,
-          platform = None // TODO investigate if we could retrieved it from acastLog.query
-        )
-      }
+  def apply(acastLog: AcastLog): Option[Event] =
+    PodcastLookup.getPodcastInfo(acastLog.filename).map { info =>
+      Event(
+        viewId = acastLog.cloudfrontRequestId,
+        url = acastLog.filename,
+        ipAddress = acastLog.ipAddress,
+        episodeId = info.episodeId,
+        podcastId = info.podcastId,
+        ua = acastLog.userAgent,
+        platform = None // TODO investigate if we could retrieved it from acastLog.query
+      )
     }
-
-  }
-
 }
