@@ -6,11 +6,12 @@ import com.amazonaws.services.s3.model.S3Object
 import scala.collection.JavaConverters._
 import com.gu.contentapi.models.{ Event, AcastLog, FastlyLog }
 import com.gu.contentapi.services.{ PodcastLookup, S3, Ophan }
-import com.typesafe.scalalogging.StrictLogging
 import com.amazonaws.util.IOUtils
 import scala.io.Source
 
-class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
+import org.apache.logging.log4j.scala.Logging
+
+class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
   override def handleRequest(event: S3Event, context: Context): Unit = {
 
@@ -28,8 +29,8 @@ class Lambda extends RequestHandler[S3Event, Unit] with StrictLogging {
 
     handleReportsFromAcast(acastReportObjects)
 
-    println(s"Cache hits: ${PodcastLookup.cacheHits}")
-    println(s"Cache misses: ${PodcastLookup.cacheMisses}")
+    logger.debug(s"Cache hits: ${PodcastLookup.cacheHits}")
+    logger.debug(s"Cache misses: ${PodcastLookup.cacheMisses}")
 
   }
 

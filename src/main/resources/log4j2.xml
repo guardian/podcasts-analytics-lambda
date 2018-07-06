@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="com.amazonaws.services.lambda.runtime.log4j2.LambdaAppender">
+    <Appenders>
+        <Lambda name="Lambda">
+            <PatternLayout>
+                <!-- docs: https://logging.apache.org/log4j/2.x/manual/layouts.html#Patterns -->
+                <!-- this pattern prints:
+                     %date => 2012-11-02 14:34:02,123
+                     %X{AWSRequestId} => UUID (extracted from the MDC)
+                     %threadId => Thread-12345 (left-aligned, space-padded to 5 characters)
+                     %level => one of "FATAL", "ERROR", "WARN ", "INFO ", "DEBUG", "TRACE" (without the quotes)
+                              (left-aligned, padded to 5 characters)
+                     %logger => o.a.c.Foo
+                     %msg => the message being logged
+                     %n => newline character
+                -->
+                <pattern>%date %X{AWSRequestId} Thread-%-5threadId %-5level %logger{1.} - %msg%n</pattern>
+            </PatternLayout>
+        </Lambda>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.gu" level="debug"/>
+        <Root level="info">
+            <AppenderRef ref="Lambda"/>
+        </Root>
+    </Loggers>
+</Configuration>
