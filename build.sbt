@@ -7,8 +7,6 @@ name := "podcasts-analytics-lambda"
 
 lazy val root = (project in file(".")).enablePlugins(JavaAppPackaging, RiffRaffArtifact)
 
-val log4jVersion = "2.11.0"
-
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.8.1",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
