@@ -10,10 +10,12 @@ object Ophan extends Logging {
   private val client = new OkHttpClient()
   private val OphanUrl = "https://ophan.theguardian.com/i.gif"
 
+  private val eventsPerSecond = 30
+
   def send(events: Seq[Event]): Unit = {
-    events foreach { e =>
-      Thread.sleep(270000 / events.length) /* send events over a period of 4 minutes and 30 seconds */
-      Ophan.send(e)
+    events.grouped(eventsPerSecond) foreach { batch =>
+      Thread.sleep(1000)
+      batch.foreach(Ophan.send)
     }
 
     logger.info(s"Events sent to Ophan: ${events.length}")
