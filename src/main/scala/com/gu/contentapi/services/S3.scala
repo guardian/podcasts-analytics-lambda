@@ -1,12 +1,13 @@
 package com.gu.contentapi.services
 
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.{ AmazonS3ClientBuilder, AmazonS3 }
+import com.amazonaws.services.s3.{ AmazonS3, AmazonS3ClientBuilder }
 import com.amazonaws.services.s3.model.S3Object
-import com.typesafe.scalalogging.StrictLogging
+import org.apache.logging.log4j.scala.Logging
+
 import scala.util.{ Failure, Success, Try }
 
-object S3 extends StrictLogging {
+object S3 extends Logging {
 
   val client: AmazonS3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build()
 

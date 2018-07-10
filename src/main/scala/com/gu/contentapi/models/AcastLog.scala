@@ -1,6 +1,8 @@
 package com.gu.contentapi.models
 
+import com.gu.contentapi.utils.CsvParser
 import purecsv.safe._
+
 import scala.util.Success
 import scala.collection.immutable.ListMap
 
@@ -148,12 +150,12 @@ case class AcastLog(
 
 object AcastLog {
 
-  def apply(line: String): Option[AcastLog] = {
+  private val parser = new CsvParser[AcastLog]
 
-    val log = CSVReader[AcastLog].readCSVFromString(line).headOption
-    val parsedLog = log collect { case Success(parsedLog) => parsedLog }
-    parsedLog.map(l => l.copy(userAgent = decode(l.userAgent), filename = decode(l.filename)))
-  }
+  def apply(line: String): Option[AcastLog] =
+    parser.parseLine(line).map(log =>
+      log.copy(userAgent = decode(log.userAgent), filename = decode(log.filename))
+    )
 
   val decodingMap = ListMap(
     "%3C" -> "<",

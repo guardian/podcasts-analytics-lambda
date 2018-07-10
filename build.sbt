@@ -9,11 +9,12 @@ lazy val root = (project in file(".")).enablePlugins(JavaAppPackaging, RiffRaffA
 
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.8.1",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+  "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
+  "com.amazonaws" % "aws-lambda-java-log4j2" % "1.1.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.133",
   "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
-  "com.github.melrief" %% "purecsv" % "0.0.9",
+  "com.github.melrief" %% "purecsv" % "0.1.1",
   "com.gu" %% "content-api-client-default" % "12.0",
   "com.squareup.okhttp3" % "okhttp" % "3.10.0",
   "net.openhft" % "zero-allocation-hashing" % "0.6",

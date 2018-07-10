@@ -2,15 +2,16 @@ package com.gu.contentapi.services
 
 import com.gu.contentapi.client._
 import com.gu.contentapi.client.model.v1.{ SearchResponse, Tag }
-import com.gu.contentapi.client.model.{ SearchQuery, ContentApiError }
-import com.typesafe.scalalogging.StrictLogging
+import com.gu.contentapi.client.model.{ ContentApiError, SearchQuery }
+
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, Future }
 import com.gu.contentapi.Config.capiKey
+import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
 
-object PodcastLookup extends StrictLogging {
+object PodcastLookup extends Logging {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -63,7 +64,10 @@ object PodcastLookup extends StrictLogging {
               podcastInfo
             }
           }
-          case FailedQuery(err) => None
+          case FailedQuery(err) =>
+            logger.error(s"Failed to get podcast info from capi for file '$filePath': $err")
+            None
+
         }, 5.seconds)
     }
   }

@@ -1,7 +1,6 @@
 package com.gu.contentapi.models
 
-import purecsv.safe._
-import scala.util.Success
+import com.gu.contentapi.utils.CsvParser
 
 case class FastlyLog(
   time: String,
@@ -24,14 +23,9 @@ case class FastlyLog(
 
 object FastlyLog {
 
-  def apply(line: String): Option[FastlyLog] = {
+  private val parser = new CsvParser[FastlyLog]
 
-    val maybeLogs = cleanLog(line) flatMap { cleanLine =>
-      CSVReader[FastlyLog].readCSVFromString(cleanLine).headOption
-    }
-
-    maybeLogs collect { case Success(parsedLog) => parsedLog }
-  }
+  def apply(line: String): Option[FastlyLog] = cleanLog(line) flatMap parser.parseLine
 
   private def removeFastlyFootprint(line: String): Option[String] = line.split(""" "" """).tail.headOption
 

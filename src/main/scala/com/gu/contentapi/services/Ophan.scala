@@ -1,10 +1,11 @@
 package com.gu.contentapi.services
 
-import okhttp3.{ OkHttpClient, Request }
+import okhttp3.{OkHttpClient, Request}
 import com.gu.contentapi.models.Event
 import com.gu.contentapi.utils.Encoding
+import org.apache.logging.log4j.scala.Logging
 
-object Ophan {
+object Ophan extends Logging {
 
   private val client = new OkHttpClient()
   private val OphanUrl = "https://ophan.theguardian.com/i.gif"
@@ -15,7 +16,7 @@ object Ophan {
       Ophan.send(e)
     }
 
-    println(s"Events sent to Ophan: ${events.length}")
+    logger.info(s"Events sent to Ophan: ${events.length}")
   }
 
   private def send(event: Event): Unit = {
