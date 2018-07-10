@@ -75,8 +75,8 @@ Resources:
         - Arn
       Runtime: java8
       Timeout: 300
-  InvocationAlarm:
-    Type: AWS::Cloudwatch::Alarm
+  LambdaInvocationAlarm:
+    Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: InvocationAlarm
       AlarmDescription: Alarm when invocation count below 200/hour
@@ -109,5 +109,29 @@ Resources:
       Threshold: 0
       Period: 60
       EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmSnsTopic
+  LambdaLogErrorsMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: "?FATAL ?ERROR ?WARN"
+      LogGroupName: !Sub "/aws/lambda/podcasts-analytics-lambda-${Stage}"
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: content-api/podcasts-analytics-lambda
+          MetricName: LogErrors
+  LambdaLogErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm if the Lambda logs an error
+      Namespace: content-api/podcasts-analytics-lambda
+      MetricName: LogErrors
+      Statistic: Sum
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      Period: 60
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
       AlarmActions:
         - !Ref AlarmSnsTopic
