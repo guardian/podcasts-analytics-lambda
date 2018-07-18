@@ -46,6 +46,7 @@ Resources:
             - arn:aws:s3::*:fastly-logs-audio/*
             - arn:aws:s3::*:acast-logs-audio
             - arn:aws:s3::*:acast-logs-audio/*
+            - arn:aws:s3::*:gu-audio-logs/*
             Effect: Allow
   Lambda:
     Type: AWS::Lambda::Function
