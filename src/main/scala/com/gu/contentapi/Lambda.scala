@@ -1,14 +1,16 @@
 package com.gu.contentapi
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.amazonaws.services.lambda.runtime.{ Context, RequestHandler }
+import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
+import com.amazonaws.services.s3.event.S3EventNotification.S3Entity
 import com.amazonaws.services.s3.model.S3Object
-import scala.collection.JavaConverters._
-import com.gu.contentapi.models.{ Event, AcastLog, FastlyLog }
-import com.gu.contentapi.services.{ PodcastLookup, S3, Ophan }
-import com.amazonaws.util.IOUtils
-import scala.io.Source
 
+import scala.collection.JavaConverters._
+import com.gu.contentapi.models.{AcastLog, Event, FastlyLog}
+import com.gu.contentapi.services.{Ophan, PodcastLookup, S3}
+import com.amazonaws.util.IOUtils
+
+import scala.io.Source
 import org.apache.logging.log4j.scala.Logging
 
 class Lambda extends RequestHandler[S3Event, Unit] with Logging {
@@ -16,13 +18,13 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
   override def handleRequest(event: S3Event, context: Context): Unit = {
 
     val fastlyReportObjects = event.getRecords.asScala
-      .filter(_.getS3.getBucket.getName == Config.FastlyAudioLogsBucketName)
-      .flatMap(reportObject => S3.downloadReport(Config.FastlyAudioLogsBucketName, reportObject.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
+      .filter(rec => isLogType(Config.FastlyAudioLogsBucketName, rec.getS3))
+      .flatMap(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
       .toList
 
     val acastReportObjects = event.getRecords.asScala
-      .filter(_.getS3.getBucket.getName == Config.AcastAudioLogsBucketName)
-      .flatMap(reportObject => S3.downloadReport(Config.AcastAudioLogsBucketName, reportObject.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
+      .filter(rec => isLogType(Config.AcastAudioLogsBucketName, rec.getS3))
+      .flatMap(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
       .toList
 
     handleReportsFromFastly(fastlyReportObjects)
@@ -33,6 +35,10 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     logger.debug(s"Cache misses: ${PodcastLookup.cacheMisses}")
 
   }
+
+  private def isLogType(typeName: String, s3Entity: S3Entity): Boolean =
+    s3Entity.getBucket.getName == typeName ||
+      s3Entity.getObject.getKey.startsWith(typeName)
 
   private def handleReportsFromFastly(objects: List[S3Object]): Unit = {
     objects foreach { obj =>
