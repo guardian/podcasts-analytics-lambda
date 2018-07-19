@@ -27,7 +27,7 @@ object FastlyLog {
 
   def apply(line: String): Option[FastlyLog] = cleanLog(line) flatMap parser.parseLine
 
-  private def removeFastlyFootprint(line: String): Option[String] = line.split(""" "" """).tail.headOption
+  private def removeFastlyFootprint(line: String): Option[String] = line.split(""": "" """).tail.headOption
 
   private def makeCsvLike(line: Option[String]): Option[String] = line.map(_.replaceAll("""" """", """",""""))
 
