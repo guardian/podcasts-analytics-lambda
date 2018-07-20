@@ -30,7 +30,7 @@ class FastlyParsingSpec extends FlatSpec with Matchers with OptionValues {
       bodyBytesRead = "0",
       contentType = "audio/mp3",
       age = "1592",
-      countryCode = "US",
+      countryCode = "",
       region = "MI",
       city = "Ypsilanti",
       location = "")
