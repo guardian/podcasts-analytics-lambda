@@ -51,7 +51,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       platform = Some("amazon-echo"))))
   }
 
-  it should "Convert a fastly log whith empty space in filename" in {
+  it should "Convert a fastly log with empty space in filename" in {
 
     val fastlyLog3 = fastlyLog1.copy(url = "/2018/01/09-50280-01 gnl.business.20180109.candb.goingglobal.mp3")
 
@@ -61,6 +61,19 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
       ipAddress = "66.87.114.159",
       episodeId = "https://www.theguardian.com/small-business-network/audio/2018/jan/10/bedroom-business-to-world-domination-meet-the-mentors-with-trunkis-rob-law-podcast",
       podcastId = "https://www.theguardian.com/business/series/the-business-podcast",
+      ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)")))
+  }
+
+  it should "Convert a fastly log with '+' in filename" in {
+
+    val fastlyLog3 = fastlyLog1.copy(url = "/2018/07/12-76884-BreathlessEP01_MIX1_+MP.mp3")
+
+    Event(fastlyLog3) should be(Some(Event(
+      viewId = "-2452628349673661344",
+      url = "https://audio.guim.co.uk/2018/07/12-76884-BreathlessEP01_MIX1_+MP.mp3",
+      ipAddress = "66.87.114.159",
+      episodeId = "https://www.theguardian.com/australia-news/audio/2018/jul/13/breathless-episode-1-death-david-dungay-jr-podcast",
+      podcastId = "https://www.theguardian.com/australia-news/series/breathless-the-death-of-david-dungay-jnr",
       ua = "Samsung SM-G900P stagefright/Beyonce/1.1.9 (Linux;Android 6.0.1)")))
   }
 
