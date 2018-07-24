@@ -22,19 +22,17 @@ object Event {
     val path = parsedUrl.encodedPath()
     val absoluteUrlToFile = hostUrl + path
 
-    //The CAPI client takes care of url encoding
-    val rawUrlWithoutParams = hostUrl + fastlyLog.url.split("""\?""").head
-
-    PodcastLookup.getPodcastInfo(rawUrlWithoutParams) map { info =>
-      Event(
-        viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time + fastlyLog.ipAddress + fastlyLog.userAgent).toString,
-        url = absoluteUrlToFile,
-        ipAddress = fastlyLog.ipAddress,
-        episodeId = info.episodeId,
-        podcastId = info.podcastId,
-        ua = fastlyLog.userAgent,
-        platform = Option(parsedUrl.queryParameter("platform")))
-    }
+    for {
+      rawPath <- fastlyLog.url.split("""\?""").headOption //The CAPI client takes care of url encoding
+      info <- PodcastLookup.getPodcastInfo(hostUrl + rawPath)
+    } yield Event(
+      viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time + fastlyLog.ipAddress + fastlyLog.userAgent).toString,
+      url = absoluteUrlToFile,
+      ipAddress = fastlyLog.ipAddress,
+      episodeId = info.episodeId,
+      podcastId = info.podcastId,
+      ua = fastlyLog.userAgent,
+      platform = Option(parsedUrl.queryParameter("platform")))
   }
 
   def apply(acastLog: AcastLog): Option[Event] =
