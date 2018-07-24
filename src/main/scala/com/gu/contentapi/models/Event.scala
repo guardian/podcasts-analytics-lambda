@@ -22,9 +22,10 @@ object Event {
     val path = parsedUrl.encodedPath()
     val absoluteUrlToFile = hostUrl + path
 
-    val decodedUrl = java.net.URLDecoder.decode(absoluteUrlToFile, "UTF-8")
+    //The CAPI client takes care of url encoding
+    val rawUrlWithoutParams = hostUrl + fastlyLog.url.split("""\?""").head
 
-    PodcastLookup.getPodcastInfo(decodedUrl) map { info =>
+    PodcastLookup.getPodcastInfo(rawUrlWithoutParams) map { info =>
       Event(
         viewId = LongHashFunction.xx_r39().hashChars(absoluteUrlToFile + fastlyLog.time + fastlyLog.ipAddress + fastlyLog.userAgent).toString,
         url = absoluteUrlToFile,
