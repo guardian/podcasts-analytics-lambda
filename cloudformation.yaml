@@ -13,6 +13,9 @@ Parameters:
   AlarmSnsTopic:
     Description: Alarm SNS topic
     Type: String
+  FunctionName:
+    Description: Name of the lambda function, because it cannot be referenced by this cloudformation even though it created the resource
+    Type: String
 Resources:
   RootRole:
     Type: AWS::IAM::Role
@@ -92,7 +95,7 @@ Resources:
       Period: 60
       EvaluationPeriods: 1
       AlarmActions:
-        !Ref AlarmSnsTopic
+        - !Ref AlarmSnsTopic
   LambdaErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -116,7 +119,7 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties:
       FilterPattern: "?FATAL ?ERROR ?WARN"
-      LogGroupName: !Sub "/aws/lambda/podcasts-analytics-lambda-${Stage}"
+      LogGroupName: !Sub "/aws/lambda/${FunctionName}"
       MetricTransformations:
         - MetricValue: 1
           MetricNamespace: content-api/podcasts-analytics-lambda
