@@ -10,6 +10,12 @@ Parameters:
     Description: The Content API key
     Type: String
     NoEcho: true
+  AlarmSnsTopic:
+    Description: Alarm SNS topic
+    Type: String
+  FunctionName:
+    Description: Name of the lambda function, because it cannot be referenced by this cloudformation even though it created the resource
+    Type: String
 Resources:
   RootRole:
     Type: AWS::IAM::Role
@@ -72,3 +78,63 @@ Resources:
         - Arn
       Runtime: java8
       Timeout: 300
+  LambdaInvocationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: InvocationAlarm
+      AlarmDescription: Alarm when invocation count below 200/hour
+      Namespace: AWS/Lambda
+      MetricName: Invocations
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            !Ref Lambda
+      Statistic: Sum
+      ComparisonOperator: LessThanThreshold
+      Threshold: 200
+      Period: 60
+      EvaluationPeriods: 1
+      AlarmActions:
+        - !Ref AlarmSnsTopic
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ErrorAlarm
+      AlarmDescription: Alarm if the Lambda fails with an error
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            !Ref Lambda
+      Statistic: Sum
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      Period: 60
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmSnsTopic
+  LambdaLogErrorsMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: "?FATAL ?ERROR ?WARN"
+      LogGroupName: !Sub "/aws/lambda/${FunctionName}"
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: content-api/podcasts-analytics-lambda
+          MetricName: LogErrors
+  LambdaLogErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm if the Lambda logs an error
+      Namespace: content-api/podcasts-analytics-lambda
+      MetricName: LogErrors
+      Statistic: Sum
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      Period: 60
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmSnsTopic
