@@ -29,13 +29,13 @@ object FastlyLog {
 
   private def removeFastlyFootprint(line: String): Option[String] = line.split(""": "" """).tail.headOption
 
-  private def makeCsvLike(line: Option[String]): Option[String] = line.map(_.replaceAll("""" """", """",""""))
+  private def makeCsvLike: String => String = _.replaceAll("""" """", """","""")
 
-  private def replaceNullElements(line: Option[String]): Option[String] = line.map(_.replaceAll("""\(null\)""", ""))
+  private def replaceNullElements: String => String = _.replaceAll("""\(null\)""", "")
 
   // turns a log line into a nicely formatted csv string we can fit in our model
 
-  val cleanLog: String => Option[String] = removeFastlyFootprint _ andThen makeCsvLike andThen replaceNullElements
+  val cleanLog: String => Option[String] = removeFastlyFootprint(_) map (makeCsvLike andThen replaceNullElements)
 
   /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
   val allowedRangePattern = """^bytes=0-(?!1$)""".r
