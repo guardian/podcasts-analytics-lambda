@@ -33,9 +33,11 @@ object FastlyLog {
 
   private def replaceNullElements: String => String = _.replaceAll("""\(null\)""", "")
 
+  private def removeEscapedQuotes: String => String = _.replaceAll("""\\"""", "")
+
   // turns a log line into a nicely formatted csv string we can fit in our model
 
-  val cleanLog: String => Option[String] = removeFastlyFootprint(_) map (makeCsvLike andThen replaceNullElements)
+  val cleanLog: String => Option[String] = removeFastlyFootprint(_) map (makeCsvLike andThen replaceNullElements andThen removeEscapedQuotes)
 
   /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
   val allowedRangePattern = """^bytes=0-(?!1$)""".r
