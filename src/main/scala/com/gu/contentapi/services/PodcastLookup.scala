@@ -1,17 +1,18 @@
 package com.gu.contentapi.services
 
+import com.gu.contentapi.Config
 import com.gu.contentapi.client._
 import com.gu.contentapi.client.model.v1.SearchResponse
-import com.gu.contentapi.client.model.{ ContentApiError, SearchQuery }
+import com.gu.contentapi.client.model.{ContentApiError, SearchQuery}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 import com.gu.contentapi.Config.capiKey
 import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
 import scala.util.control.NonFatal
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
 object PodcastLookup extends Logging {
 
@@ -21,7 +22,9 @@ object PodcastLookup extends Logging {
   case class SuccessfulQuery(searchResponse: SearchResponse) extends ResponseFromCapiQuery
   case class FailedQuery(errorMsg: String) extends ResponseFromCapiQuery
 
-  val client = new GuardianContentClient(capiKey)
+  private val client = new GuardianContentClient(capiKey) {
+    override def targetUrl = Config.capiUrl
+  }
 
   case class PodcastInfo(
     episodeId: String,
