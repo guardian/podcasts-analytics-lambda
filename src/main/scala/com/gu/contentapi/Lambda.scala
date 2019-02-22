@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.event.S3EventNotification.{ S3Entity, S3EventNo
 import com.amazonaws.services.s3.model.S3Object
 
 import scala.collection.mutable.Buffer
+import scala.collection.GenTraversableOnce
 import scala.collection.JavaConverters._
 import com.gu.contentapi.models.{ AcastLog, Event, FastlyLog }
 import com.gu.contentapi.services.{ Ophan, PodcastLookup, S3 }
@@ -32,20 +33,17 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
   private final def process[A](
     predicate: A => Boolean,
-    toEvent: A => collection.GenTraversableOnce[Event],
-    builder: String => collection.GenTraversableOnce[A])(objects: Buffer[S3EventNotificationRecord]): Unit =
+    toEvent: A => GenTraversableOnce[Event],
+    builder: String => GenTraversableOnce[A])(objects: Buffer[S3EventNotificationRecord]): Unit =
     objects.toList
-      .flatMap(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
-      .map(toDownloadLogs[A](predicate, builder))
+      .map(S3.downloadReport(_).map(toDownloadLogs[A](predicate, builder)).getOrElse(Nil))
       .foreach(downloadsLogs => Ophan.send(downloadsLogs.flatMap(toEvent)))
 
   private def isLogType(typeName: String, s3Entity: S3Entity): Boolean =
     s3Entity.getBucket.getName == typeName ||
       s3Entity.getObject.getKey.startsWith(typeName)
 
-  private def toDownloadLogs[B](predicate: B => Boolean, builder: String => collection.GenTraversableOnce[B])(obj: S3Object): List[B] = {
-    import com.gu.contentapi.utils.PredicateUtils._
-
+  private def toDownloadLogs[A](predicate: A => Boolean, builder: String => GenTraversableOnce[A])(obj: S3Object): List[A] = {
     Source
       .fromBytes(IOUtils.toByteArray(obj.getObjectContent))("ISO-8859-1")
       .getLines
