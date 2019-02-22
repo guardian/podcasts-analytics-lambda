@@ -18,7 +18,7 @@ object S3 extends Logging {
 
     Try(client.getObject(
       reportName,
-      notif.getS3.getObject.getKey.replaceAll("%3A", ":")
+      entity.getObject.getKey.replaceAll("%3A", ":")
     // ^ looks like the json object is not decoded properly by the SDK
     )) match {
       case Success(report) => {
