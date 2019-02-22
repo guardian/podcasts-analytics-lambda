@@ -1,13 +1,14 @@
 package com.gu.contentapi
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
-import com.amazonaws.services.s3.event.S3EventNotification.S3Entity
+import com.amazonaws.services.lambda.runtime.{ Context, RequestHandler }
+import com.amazonaws.services.s3.event.S3EventNotification.{ S3Entity, S3EventNotificationRecord }
 import com.amazonaws.services.s3.model.S3Object
 
+import scala.collection.mutable.Buffer
 import scala.collection.JavaConverters._
-import com.gu.contentapi.models.{AcastLog, Event, FastlyLog}
-import com.gu.contentapi.services.{Ophan, PodcastLookup, S3}
+import com.gu.contentapi.models.{ AcastLog, Event, FastlyLog }
+import com.gu.contentapi.services.{ Ophan, PodcastLookup, S3 }
 import com.amazonaws.util.IOUtils
 
 import scala.io.Source
