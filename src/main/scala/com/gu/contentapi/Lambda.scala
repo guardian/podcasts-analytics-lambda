@@ -33,7 +33,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     logger.debug(s"Cache misses: ${PodcastLookup.cacheMisses}")
   }
 
-  def isLogType(typeName: String, s3Entity: S3Entity): Boolean =
+  private def isLogType(typeName: String, s3Entity: S3Entity): Boolean =
     s3Entity.getBucket.getName == typeName ||
       s3Entity.getObject.getKey.startsWith(typeName)
 
