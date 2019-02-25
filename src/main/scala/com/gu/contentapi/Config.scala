@@ -9,4 +9,6 @@ object Config {
 
   val AudioLogsBucketName = "gu-audio-logs"
 
+  val minDownloadSize: Long = Long.MinValue
+
 }

@@ -10,7 +10,7 @@ case class AcastLog(
   /** Timestamp */
   timestamp: String,
   /** (sc-bytes) The total number of bytes that CloudFront served to the viewer in response to the request, including headers */
-  bytes: String,
+  bytes: Long,
   /** (byte-range) The range of bytes requested by the client */
   range: String,
   /** (c-ip) The IP address of the viewer that made the request, for example, 192.0.2.183 or 2001:0db8:85a3:0000:0000:8a2e:0370:7334. If the viewer used an HTTP proxy or a load balancer to send the request, the value of c-ip is the IP address of the proxy or load balancer */
