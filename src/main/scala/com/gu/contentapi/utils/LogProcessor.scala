@@ -54,15 +54,16 @@ object LogProcessor {
   }
 
   def normalProcess[A](builder: String => Option[A], predicate: A => Boolean, objects: Iterable[S3EventNotificationRecord]): List[A] =
-    objects.toList
-      .flatMap(S3.downloadReport(_).map(toDownloadLogs[A](predicate, builder)).getOrElse(Nil))
+    objects.foldLeft(List.empty[A]) { (result, obj) =>
+      S3.downloadReport(obj).map(toDownloadLogs[A](predicate, builder)).map(result ++ _).getOrElse(result)
+    }
 
   def toDownloadLogs[A](predicate: A => Boolean, builder: String => Option[A])(obj: S3Object): List[A] =
     Source
       .fromBytes(IOUtils.toByteArray(obj.getObjectContent))("ISO-8859-1")
       .getLines
-      .toList
-      .flatMap(l => builder(l).map(List(_)).getOrElse(Nil))
-      .filter(predicate)
+      .foldLeft(List.empty[A]) { (result, line) =>
+        builder(line).filter(predicate).foldRight(result)(_ :: _)
+      }
 
 }
