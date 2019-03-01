@@ -6,11 +6,10 @@ import com.amazonaws.util.IOUtils
 import com.gu.contentapi.models.{ AcastLog, FastlyLog }
 import com.gu.contentapi.services.S3
 import com.gu.contentapi.Config
-import scala.collection.mutable.Buffer
 import scala.io.Source
 
 sealed abstract class LogProcessor[A] {
-  def process(objects: Buffer[S3EventNotificationRecord]): List[A]
+  def process(objects: Iterable[S3EventNotificationRecord]): List[A]
 }
 
 object LogProcessor {
@@ -18,7 +17,7 @@ object LogProcessor {
   lazy val fastly = new FastlyLogProcessor()
 
   final class FastlyLogProcessor private[LogProcessor] extends LogProcessor[FastlyLog] {
-    final def process(objects: Buffer[S3EventNotificationRecord]) =
+    final def process(objects: Iterable[S3EventNotificationRecord]) =
       normalProcess[FastlyLog](
         FastlyLog(_),
         r => FastlyLog.onlyDownloads(r) && FastlyLog.onlyGet(r),
@@ -26,7 +25,7 @@ object LogProcessor {
   }
 
   final class AcastLogProcessor private[LogProcessor] extends LogProcessor[AcastLog] {
-    final def process(objects: Buffer[S3EventNotificationRecord]) =
+    final def process(objects: Iterable[S3EventNotificationRecord]) =
       processAcast(normalProcess[AcastLog](
         AcastLog(_),
         r => AcastLog.onlyDownloads(r) && AcastLog.onlySuccessfulReponses(r) && AcastLog.onlyGet(r),
@@ -54,7 +53,7 @@ object LogProcessor {
         .toList
   }
 
-  def normalProcess[A](builder: String => Option[A], predicate: A => Boolean, objects: Buffer[S3EventNotificationRecord]): List[A] =
+  def normalProcess[A](builder: String => Option[A], predicate: A => Boolean, objects: Iterable[S3EventNotificationRecord]): List[A] =
     objects.toList
       .flatMap(S3.downloadReport(_).map(toDownloadLogs[A](predicate, builder)).getOrElse(Nil))
 
