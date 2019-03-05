@@ -6,10 +6,14 @@ import com.amazonaws.util.IOUtils
 import com.gu.contentapi.models.{ AcastLog, FastlyLog }
 import com.gu.contentapi.services.S3
 import com.gu.contentapi.Config
+import java.io.InputStream
 import scala.io.Source
 
 sealed abstract class LogProcessor[A] {
   def process(objects: Iterable[S3EventNotificationRecord]): List[A]
+
+  def download(obj: S3EventNotificationRecord): Option[InputStream] =
+    S3.downloadReport(obj).map(_.getObjectContent)
 }
 
 object LogProcessor {
@@ -37,7 +41,7 @@ object LogProcessor {
      * number of bytes being sent back and filter out entries that do not go beyond
      * `Config.minDownloadSize` bytes.
      */
-    private final def processAcast[A](logs: List[AcastLog]): List[AcastLog] =
+    final def processAcast[A](logs: List[AcastLog]): List[AcastLog] =
       logs.foldLeft(Map.empty[(String, String, String), (AcastLog, Long)]) {
         case (entries, log) =>
           val size = log.bytes
@@ -55,12 +59,16 @@ object LogProcessor {
 
   def normalProcess[A](builder: String => Option[A], predicate: A => Boolean, objects: Iterable[S3EventNotificationRecord]): List[A] =
     objects.foldLeft(List.empty[A]) { (result, obj) =>
-      S3.downloadReport(obj).map(toDownloadLogs[A](predicate, builder)).map(result ++ _).getOrElse(result)
+      S3.downloadReport(obj).map { report =>
+        val logs = toDownloadLogs[A](predicate, builder)(report.getObjectContent)
+        report.close()
+        logs
+      }.map(result ++ _).getOrElse(result)
     }
 
-  def toDownloadLogs[A](predicate: A => Boolean, builder: String => Option[A])(obj: S3Object): List[A] =
+  def toDownloadLogs[A](predicate: A => Boolean, builder: String => Option[A])(input: InputStream): List[A] =
     Source
-      .fromBytes(IOUtils.toByteArray(obj.getObjectContent))("ISO-8859-1")
+      .fromInputStream(input, "ISO-8859-1")
       .getLines
       .foldLeft(List.empty[A]) { (result, line) =>
         builder(line).filter(predicate).foldRight(result)(_ :: _)

@@ -107,7 +107,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
   val acastLog1 = AcastLog(
     timestamp = "2017-05-18T07:18:00.000Z",
-    bytes = "26940335",
+    bytes = 26940335L,
     range = "-",
     ipAddress = "87.7.235.91",
     request = "GET",
@@ -134,7 +134,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
   val acastLog2 = AcastLog(
     timestamp = "2017-05-29T11:00:06.000Z",
-    bytes = "18195051",
+    bytes = 18195051L,
     range = "-",
     ipAddress = "217.42.5.77",
     request = "GET",

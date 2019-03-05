@@ -2,6 +2,7 @@ package com.gu.contentapi
 
 import com.gu.contentapi.models.{ Event, AcastLog }
 import com.gu.contentapi.services.PodcastLookup
+import java.io.FileInputStream
 import org.scalatest.{ FlatSpec, Matchers, OptionValues }
 
 import scala.io.Source
@@ -10,7 +11,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
   it should "parse a log file into a Acast log model" in {
 
-    val lines: Seq[String] = Source.fromFile("src/test/resources/acast-logs-sample.txt")("ISO-8859-1").getLines().toSeq
+    val lines: Seq[String] = Source.fromInputStream(new FileInputStream(getClass.getResource("/acast-logs-sample.txt").getFile), "ISO-8859-1").getLines().toSeq
 
     val downloads: Seq[AcastLog] = lines flatMap { line => AcastLog(line) }
 
@@ -19,7 +20,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
     val first = AcastLog(
       timestamp = "2017-05-29T11:00:06.000Z",
-      bytes = "18195051",
+      bytes = 18195051L,
       range = "-",
       ipAddress = "217.42.5.77",
       request = "GET",
@@ -47,7 +48,7 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
     val second = AcastLog(
       timestamp = "2017-05-18T07:18:00.000Z",
-      bytes = "26940335",
+      bytes = 26940335L,
       range = "-",
       ipAddress = "87.7.235.91",
       request = "GET",
@@ -75,8 +76,8 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
     val third = AcastLog(
       timestamp = "2017-05-18T07:18:13.000Z",
-      bytes = "26969867",
-      range = "-",
+      bytes = 26969867L,
+      range = "0-6895046",
       ipAddress = "101.186.58.250",
       request = "GET",
       url = "/encoded/dcd5264b-a4bc-4fc6-a7d7-23500e04fffd/9f9a7fd1-6f8c-41dc-bb9c-bac2b7d5b31c/encoded-0a2236c4665171be111f0bd8254e29e7-128.mp3",
@@ -103,8 +104,8 @@ class AcastParsingSpec extends FlatSpec with Matchers with OptionValues {
 
     val fourth = AcastLog(
       timestamp = "2017-05-18T07:18:13.000Z",
-      bytes = "26969867",
-      range = "-",
+      bytes = 26969867L,
+      range = "0-17884",
       ipAddress = "101.186.58.250",
       request = "GET",
       url = "/encoded/dcd5264b-a4bc-4fc6-a7d7-23500e04fffd/9f9a7fd1-6f8c-41dc-bb9c-bac2b7d5b31c/encoded-0a2236c4665171be111f0bd8254e29e7-128.mp3",
