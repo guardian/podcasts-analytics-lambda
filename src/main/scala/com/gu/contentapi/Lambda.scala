@@ -18,8 +18,8 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
     val (fastlyRecords, maybeAcastRecords) = event.getRecords.asScala
       .partition(rec => isLogType(Config.FastlyAudioLogsBucketName, rec.getS3))
-    val (acastRecords, otherRecords) = maybeAcastRecords
-      .partition(rec => isLogType(Config.AcastAudioLogsBucketName, rec.getS3))
+    val acastRecords = maybeAcastRecords
+      .filter(rec => isLogType(Config.AcastAudioLogsBucketName, rec.getS3))
 
     Ophan.send {
       LogProcessor.fastly.process(fastlyRecords).flatMap(Event(_))
