@@ -42,18 +42,20 @@ object LogProcessor {
      * `Config.minDownloadSize` bytes.
      */
     final def processAcast[A](logs: List[AcastLog]): List[AcastLog] =
-      logs.foldLeft(Map.empty[(String, String, String), (AcastLog, Long)]) {
+      logs.foldLeft(Map.empty[(String, String, String), (List[AcastLog], Long)]) {
         case (entries, log) =>
           val size = log.bytes
           val key = (log.ipAddress, log.userAgent, log.url)
-          entries + entries.get(key).foldLeft(key -> (log, size)) {
-            case ((key, (log, size)), entry) =>
-              key -> (log, size + entry._2)
+          entries + entries.get(key).foldLeft(key -> (List(log), size)) {
+            case ((key, (log, size)), (logs, totalSize)) =>
+              key -> (log ++ logs, size + totalSize)
           }
       }
         .values
-        .filter(_._2 >= Config.minDownloadSize)
-        .map(_._1)
+        .collect {
+          case (log :: Nil, _) => log
+          case (log :: _, size) if size >= Config.minDownloadSize => log
+        }
         .toList
   }
 
