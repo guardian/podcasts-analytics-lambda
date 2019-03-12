@@ -54,7 +54,7 @@ object LogProcessor {
         .values
         .collect {
           case (log :: Nil, _) => log
-          case (log :: _, size) if size >= Config.minDownloadSize => log
+          case (log :: _, size) if size >= Config.minDownloadSize => log.copy(bytes = size)
         }
         .toList
   }
