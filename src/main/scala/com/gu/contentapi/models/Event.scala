@@ -47,4 +47,18 @@ object Event {
         platform = None // TODO investigate if we could retrieved it from acastLog.query
       )
     }
+
+  def apply(acastIabLog: AcastIabLog): Option[Event] =
+    PodcastLookup.getPodcastInfo(acastIabLog.sourceFileName).map { info =>
+      Event(
+        viewId = acastIabLog.userIdHash,
+        url = acastIabLog.sourceFileName,
+        ipAddress = acastIabLog.userIpHash,
+        episodeId = info.episodeId,
+        podcastId = info.podcastId,
+        ua = acastIabLog.userAgent,
+        platform = None
+      )
+    }
+
 }

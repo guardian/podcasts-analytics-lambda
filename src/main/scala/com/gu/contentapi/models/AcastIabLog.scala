@@ -3,11 +3,6 @@ package com.gu.contentapi.models
 import com.gu.contentapi.utils.CsvParser
 import com.gu.contentapi.models.AcastDecoder
 
-import purecsv.safe._
-
-import scala.util.Success
-import scala.collection.immutable.ListMap
-
 /*
 
 timestamp
@@ -123,52 +118,59 @@ latitude
 
 */
 
-case class AcastLog(
+case class AcastIabLog(
   timestamp: String,
-  bytes: String,
-  range: String,
-  ipAddress: String,
-  request: String,
-  url: String, /* relative URL */
-  status: String,
-  referrer: String,
+  showUrl: String,    // meaningless
+  episodeUrl: String, // meaningless
+  userIdHash: String,
+  httpMethod: String,
+  httpStatus: String,
+  rangeRequest: String,
+  rangeFrom: String,
+  rangeTo: String,
+  bytesDelivered: String,
+  stitchSize: String,
   userAgent: String,
-  query: String,
-  host: String,
-  forwardedFor: String,
-  cloudfrontResultType: String,
-  cloudfrontResponseResultType: String,
-  cloudfrontRequestId: String,
-  city: String,
-  country: String,
-  countryCode: String,
-  region: String,
-  continentCode: String,
-  dmaCode: String,
-  postalCode: String,
-  longitude: String,
-  latitude: String,
-  filename: String)
+  userIpHash: String,
+  geoCity: String,
+  geoCountry: String,
+  geoCountryIsoCode: String,
+  geoContinent: String,
+  geoIsEu: String,
+  geoPostalCode: String,
+  geoLatitude: String,
+  geoLongitude: String,
+  geoTimeZone: String,
+  geoRegion: String,
+  geoIsp: String,
+  isIabValid: String,
+  sourceFileName: String)
 
-object AcastLog {
+object AcastIabLog {
 
-  private val parser = new CsvParser[AcastLog]
+  private val parser = new CsvParser[AcastIabLog]
 
-  def apply(line: String): Option[AcastLog] =
+  val allowedRangePattern = """^0-(?!1$)""".r // this is duplicted from AcastLog - refactor out maybe
+
+  val successfulInitialRequestsFilter: (AcastIabLog => Boolean) = { log =>
+    log.httpMethod == "GET" &&
+    log.httpStatus == "200"
+  }
+
+  val successfulPartialRequestsFilter: (AcastIabLog => Boolean) =  { log =>
+    log.httpMethod == "GET" &&
+    log.httpStatus == "206" &&
+    (allowedRangePattern.findFirstIn(log.rangeRequest).nonEmpty || (log.rangeFrom.toInt == 0 && log.rangeTo.toInt > 1))
+  }
+
+  def userRequests(logs: Seq[AcastIabLog], userIdHash: String): Seq[AcastIabLog] = {
+    logs.filter(_.userIdHash == userIdHash)
+  }
+
+  def apply(line: String): Option[AcastIabLog] =
     parser.parseLine(line).map(log =>
-      log.copy(userAgent = AcastDecoder.decode(log.userAgent), filename = AcastDecoder.decode(log.filename))
+      log.copy(userAgent = AcastDecoder.decode(log.userAgent), sourceFileName = AcastDecoder.decode(log.sourceFileName))
     )
-
-  /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
-  val allowedRangePattern = """^0-(?!1$)""".r
-  val onlyDownloads: AcastLog => Boolean = log =>
-    log.status != "206" || allowedRangePattern.findFirstIn(log.range).nonEmpty
-
-  /* filter out error reponses */
-  val onlySuccessfulReponses: AcastLog => Boolean = { log => log.cloudfrontResponseResultType == "Hit" || log.cloudfrontResponseResultType == "RefreshHit" || log.cloudfrontResponseResultType == "Miss" }
-
-  /* filter out HEAD and any non GET requests */
-  val onlyGet: AcastLog => Boolean = { log => log.request == "GET" }
 
 }
 
