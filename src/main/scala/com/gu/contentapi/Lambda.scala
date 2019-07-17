@@ -1,12 +1,14 @@
 package com.gu.contentapi
 
+import java.io.{File, FileOutputStream}
+
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
 import com.amazonaws.services.s3.event.S3EventNotification.S3Entity
 import com.amazonaws.services.s3.model.S3Object
 
 import scala.collection.JavaConverters._
-import com.gu.contentapi.models.{AcastLog, AcastIabLog, Event, FastlyLog}
+import com.gu.contentapi.models.{AcastIabLog, AcastLog, Event, FastlyLog}
 import com.gu.contentapi.services.{Ophan, PodcastLookup, S3}
 import com.amazonaws.util.IOUtils
 
@@ -29,6 +31,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
     val acastIabReportObjects = event.getRecords.asScala
       .filter(rec => isLogType(Config.AcastIabAudioLogsBucketName, rec.getS3))
+      .filter(rec => isCsvFile(rec.getS3))
       .flatMap(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
       .toList
 
@@ -46,6 +49,9 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
   private def isLogType(typeName: String, s3Entity: S3Entity): Boolean =
     s3Entity.getBucket.getName == typeName ||
       s3Entity.getObject.getKey.startsWith(typeName)
+
+  private def isCsvFile(s3Entity: S3Entity): Boolean =
+    s3Entity.getObject.getKey.endsWith(".csv")
 
   private def handleReportsFromFastly(objects: List[S3Object]): Unit = {
     objects foreach { obj =>
@@ -79,7 +85,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
   private def handleIabReportsFromAcast(objects: List[S3Object]): Unit = {
 
-    val IabValidThreshold = 1000
+    val IabValidThreshold = 1000  // an arbitrary value at this time - needs to be matched to Acast's calcs
 
     objects foreach { obj =>
 
@@ -120,12 +126,24 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
         }
       }.toSeq
 
-      val ophanEvents = distinctUserFileRequestsWithAggregatedBytesAndIabMarker.flatMap(Event(_))
+      // TODO:
+      // while we're debugging, we're going to write our condensed processed data to a
+      // temporary file so we can check it manually (it's still a CSV of sorts)
+      // we'll remove all this later, leaving just the Ophan event creation in place
+      val outputFileName = obj.getKey().replaceFirst(".csv", "")
+      val outputFile = File.createTempFile(outputFileName, ".tmp", new File("/tmp"))
+      val outputStream = new FileOutputStream(outputFile)
+      distinctUserFileRequestsWithAggregatedBytesAndIabMarker.foreach { log =>
+        outputStream.write(log.toCsv.getBytes)
+        outputStream.write("\n".getBytes)
+      }
+      outputStream.flush()
+      outputStream.close()
+      S3.client.putObject(obj.getBucketName(), outputFileName + ".condensed", outputFile)
+      outputFile.delete()
 
-      // TODO: DEBUGGING! Stop this when we enable the Ophan.send call
-      ophanEvents.foreach(println)
-
-      // TODO: Activate ophan send if everything looks ok
+      // TODO: Begin sending events to ophan when everything looks ok
+      // val ophanEvents = distinctUserFileRequestsWithAggregatedBytesAndIabMarker.flatMap(Event(_))
       // Ophan.send(ophanEvents)
 
     }

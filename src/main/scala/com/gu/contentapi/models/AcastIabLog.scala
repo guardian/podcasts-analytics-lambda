@@ -144,7 +144,14 @@ case class AcastIabLog(
   geoRegion: String,
   geoIsp: String,
   isIabValid: String,
-  sourceFileName: String)
+  sourceFileName: String
+) {
+  def toCsv: String = {
+    this.productIterator.map {
+      case s: String => '"' + s + '"'
+    }.mkString(",")
+  }
+}
 
 object AcastIabLog {
 
