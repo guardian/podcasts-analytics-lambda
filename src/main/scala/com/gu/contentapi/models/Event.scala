@@ -57,8 +57,7 @@ object Event {
         episodeId = info.episodeId,
         podcastId = info.podcastId,
         ua = acastIabLog.userAgent,
-        platform = None
-      )
+        platform = None)
     }
 
 }

@@ -1,126 +1,127 @@
 package com.gu.contentapi.models
 
 import com.gu.contentapi.utils.CsvParser
-import com.gu.contentapi.models.AcastDecoder
 
 /*
 
 timestamp
 ----------
+The time. Stamped.
 
+show_url
+--------
+Not a URL at all!
 
-sc-bytes
+episode_url
+-----------
+Not a URL either. Just the title of the episode, lower-cased and hyphenated.
+No idea why.
+
+best_effort_user_id
+-------------------
+A hash based on the user's UA string and IP address. Here be dragons, especially
+when more than one person has the same kind of device as others, and they're all
+behind a common router
+
+method
+------
+The http method. We're only interested in GETs but there may be others, e.g. HEADs.
+
+status
+------
+The http result code. We're interested in 200s and 206s only
+
+range_req
+---------
+An unreliable value that might contain a range with each part separated by a hyphen,
+or half a range (a number and a hyphen then nothing else), or nothing at all
+
+range_from
 ----------
-The total number of bytes that CloudFront served to the viewer in response to the request, including headers
+If the range_req (above) had something in it, this should be whatever was before the
+hyphen. Might also be zero.
 
-byte-range
------------
+range_to
+--------
+If the range_req (above) had something in it, this should be whatever was after the
+hyphen.
 
-
-c-ip
-----------
-The IP address of the viewer that made the request, for example, 192.0.2.183 or 2001:0db8:85a3:0000:0000:8a2e:0370:7334. If the viewer used an HTTP proxy or a load balancer to send the request, the value of c-ip is the IP address of the proxy or load balancer
-
-cs-method
------------
-The HTTP access method: DELETE, GET, HEAD, OPTIONS, PATCH, POST, or PUT
-
-cs-uri-stem
------------
-The portion of the URI that identifies the path and object, for example, /images/daily-ad.jpg.
-
-sc-status
-----------
-One of the following values:
-
- * An HTTP status code (for example, 200). For a list of HTTP status codes, see RFC 2616, Hypertext Transfer Protocol—HTTP 1.1, section 10, Status Code Definitions. For more information, see How CloudFront Processes and Caches HTTP 4xx and 5xx Status Codes from Your Origin.
- * 000, which indicates that the viewer closed the connection (for example, closed the browser tab) before CloudFront could respond to a request.
-
-cs(Referer)
------------
-The name of the domain that originated the request. Common referrers include search engines, other websites that link directly to your objects, and your own website.
-
-cs(User-Agent)
---------------
-
-cs-uri-query
--------------
-The query string portion of the URI, if any. When a URI doesn't contain a query string, the value of cs-uri-query is a hyphen (-).
-
-x-host-header
--------------
-The value that the viewer included in the Host header for this request. This is the domain name in the request:
-
-If you're using the CloudFront domain name in your object URLs, such as http://d111111abcdef8.cloudfront.net/logo.png, the x-host-header field contains that domain name.
-If you're using alternate domain names in your object URLs, such as http://example.com/logo.png, the x-host-header field contains the alternate domain name, such as example.com. To use alternate domain names, you must add them to your distribution. For more information, see Using Alternate Domain Names (CNAMEs).
-If you're using alternate domain names, see cs(Host) in field 7 for the domain name that is associated with your distribution.
-
-x-forwarded-for
+bytes_delivered
 ---------------
-If the viewer used an HTTP proxy or a load balancer to send the request, the value of c-ip in field 5 is the IP address of the proxy or load balancer. In that case, x-forwarded-for is the IP address of the viewer that originated the request.
-If the viewer did not use an HTTP proxy or a load balancer, the value of x-forwarded-for is a hyphen (-).
+How many bytes were sent to the agent in response to their request
 
-x-edge-result-type
-------------------
+stitch_size
+-----------
+Looks like this is the entire file size (I hope so because I'm making decisions based
+on that)
 
-How CloudFront classifies the response after the last byte left the edge location. In some cases, the result type can change between the time that CloudFront is ready to send the response and the time that CloudFront has finished sending the response. For example, in HTTP streaming, suppose CloudFront finds a segment in the edge cache. The value of x-edge-response-result-type, the result type immediately before CloudFront begins to respond to the request, is Hit. However, if the user closes the viewer before CloudFront has delivered the entire segment, the final result type—the value of x-edge-result-type—changes to Error.
+ua_source
+---------
+That's a User Agent string to you and me
 
-Possible values include:
+ip
+--
+A hash of the user's IP address, because GDPR
 
- * Hit – CloudFront served the object to the viewer from the edge cache.
-   For information about a situation in which CloudFront classifies the result type as Hit even though the response from the origin contains a Cache-Control: no-cache header, see Simultaneous Requests for the Same Object (Traffic Spikes).
- * RefreshHit – CloudFront found the object in the edge cache but it had expired, so CloudFront contacted the origin to determine whether the cache has the latest version of the object and, if not, to get the latest version.
- * Miss – The request could not be satisfied by an object in the edge cache, so CloudFront forwarded the request to the origin server and returned the result to the viewer.
- * LimitExceeded – The request was denied because a CloudFront limit was exceeded.
- * CapacityExceeded – CloudFront returned an HTTP 503 status code (Service Unavailable) because the CloudFront edge server was temporarily unable to respond to requests.
- * Error – Typically, this means the request resulted in a client error (sc-status is 4xx) or a server error (sc-status is 5xx).
- * Redirect – CloudFront redirects from HTTP to HTTPS.
-   If sc-status is 403 and you configured CloudFront to restrict the geographic distribution of your content, the request might have come from a restricted location. For more information about geo restriction, see Restricting the Geographic Distribution of Your Content.
-   If the value of x-edge-result-type is Error and the value of x-edge-response-result-type is not Error, the client disconnected before finishing the download.
+geo_city
+--------
+The city name the request originated in e.g. Gothenburg, Oldham
 
+geo_country
+-----------
+The full country name of origin of the request, e.g. United Kingdom, Sweden
 
-x-edge-response-result-type
-----------------------------
+geo_country_iso
+---------------
+The universal short ID of the country of origin, e.g. GB, SE
 
-How CloudFront classified the response just before returning the response to the viewer. See also x-edge-result-type in field 14.
+geo_continent
+-------------
+The name of the continent or origin, e.g. Europe, Oceania
 
-Possible values include:
+geo_is_eu
+---------
+true or false, depending on whether the country is in the EU
 
- * Hit – CloudFront served the object to the viewer from the edge cache.
- * RefreshHit – CloudFront found the object in the edge cache but it had expired, so CloudFront contacted the origin to verify that the cache has the latest version of the object.
- * Miss – The request could not be satisfied by an object in the edge cache, so CloudFront forwarded the request to the origin server and returned the result to the viewer.
- * LimitExceeded – The request was denied because a CloudFront limit was exceeded.
- * CapacityExceeded – CloudFront returned a 503 error because the edge location didn't have enough capacity at the time of the request to serve the object.
- * Error – Typically, this means the request resulted in a client error (sc-status is 4xx) or a server error (sc-status is 5xx).
- * Redirect – CloudFront redirects from HTTP to HTTPS.
+geo_postal
+----------
+The first part of the post code
 
-If sc-status is 403 and you configured CloudFront to restrict the geographic distribution of your content, the request might have come from a restricted location. For more information about geo restriction, see Restricting the Geographic Distribution of Your Content.
-If the value of x-edge-result-type is Error and the value of x-edge-response-result-type is not Error, the client disconnected before finishing the download.
+geo_lat
+-------
+Latitude
 
+geo_lon
+-------
+Longitude
 
-x-edge-request-id
------------------
-An encrypted string that uniquely identifies a request.
+geo_time_zone
+-------------
+The name of the time zone in effect in the identified country,
+e.g. Europe/London, Australia/Sydney
 
-----------------
-| Other fields |
-----------------
+geo_region
+----------
+The name of the territory within the defined country,
+e.g. England, Scotland, New South Wales
 
-city
-country
-country code
-region code
-continent code
-dma code
-postal_code
-longitude
-latitude
+geo_isp
+-------
+The name of the internet service provider, e.g. EE Mobile, SAKURA Internet
+
+is_iab_valid
+------------
+Whether this request meets IAB guidelines for a 'complete' listen
+
+filename
+--------
+The full path to the original media file (audio.guim)
 
 */
 
 case class AcastIabLog(
   timestamp: String,
-  showUrl: String,    // meaningless
+  showUrl: String, // meaningless
   episodeUrl: String, // meaningless
   userIdHash: String,
   httpMethod: String,
@@ -144,8 +145,7 @@ case class AcastIabLog(
   geoRegion: String,
   geoIsp: String,
   isIabValid: String,
-  sourceFileName: String
-) {
+  sourceFileName: String) {
   def toCsv: String = {
     this.productIterator.map {
       case s: String => '"' + s + '"'
@@ -157,17 +157,14 @@ object AcastIabLog {
 
   private val parser = new CsvParser[AcastIabLog]
 
-  val allowedRangePattern = """^0-(?!1$)""".r // this is duplicted from AcastLog - refactor out maybe
-
-  val successfulInitialRequestsFilter: (AcastIabLog => Boolean) = { log =>
-    log.httpMethod == "GET" &&
-    log.httpStatus == "200"
+  val validRangeRequestsFilter: (AcastIabLog => Boolean) = { log =>
+    val allowedRangePattern = """^0-(?!1$)""".r // this is duplicated from AcastLog - refactor out maybe
+    allowedRangePattern.findFirstIn(log.rangeRequest).nonEmpty || (log.rangeFrom.toInt == 0 && log.rangeTo.toInt > 1)
   }
 
-  val successfulPartialRequestsFilter: (AcastIabLog => Boolean) =  { log =>
-    log.httpMethod == "GET" &&
-    log.httpStatus == "206" &&
-    (allowedRangePattern.findFirstIn(log.rangeRequest).nonEmpty || (log.rangeFrom.toInt == 0 && log.rangeTo.toInt > 1))
+  val validHttpMethodAndStatus: (AcastIabLog => Boolean) = { logEntry =>
+    logEntry.httpMethod == "GET" &&
+      (logEntry.httpStatus == "200" || logEntry.httpStatus == "206")
   }
 
   def userRequests(logs: Seq[AcastIabLog], userIdHash: String): Seq[AcastIabLog] = {
@@ -176,8 +173,7 @@ object AcastIabLog {
 
   def apply(line: String): Option[AcastIabLog] =
     parser.parseLine(line).map(log =>
-      log.copy(userAgent = AcastDecoder.decode(log.userAgent), sourceFileName = AcastDecoder.decode(log.sourceFileName))
-    )
+      log.copy(userAgent = AcastDecoder.decode(log.userAgent), sourceFileName = AcastDecoder.decode(log.sourceFileName)))
 
 }
 

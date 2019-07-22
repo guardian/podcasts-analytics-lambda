@@ -1,7 +1,6 @@
 package com.gu.contentapi.models
 
 import com.gu.contentapi.utils.CsvParser
-import com.gu.contentapi.models.AcastDecoder
 
 import purecsv.safe._
 
