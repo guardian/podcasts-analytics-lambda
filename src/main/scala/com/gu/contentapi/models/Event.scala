@@ -51,7 +51,7 @@ object Event {
   def apply(acastIabLog: AcastIabLog): Option[Event] =
     PodcastLookup.getPodcastInfo(acastIabLog.sourceFileName).map { info =>
       Event(
-        viewId = acastIabLog.userIdHash,
+        viewId = acastIabLog.userIdHash,  // TODO: Not good enough(?)
         url = acastIabLog.sourceFileName,
         ipAddress = acastIabLog.userIpHash,
         episodeId = info.episodeId,
