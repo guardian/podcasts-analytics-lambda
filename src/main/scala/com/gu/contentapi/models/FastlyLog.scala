@@ -3,10 +3,10 @@ package com.gu.contentapi.models
 import com.gu.contentapi.utils.CsvParser
 
 /**
-  * Log format:
-  *
-  * "" "%t" "req.request" "req.url" "req.http.host" "resp.status" "client.ip" "req.http.user-agent" "req.http.referer" "req.http.Range" "req.header_bytes_read" "req.body_bytes_read" "resp.http.Content-Type" "resp.http.Age" "geoip.country_code" "geoip.region" "geoip.city" "resp.http.Location"
-  */
+ * Log format:
+ *
+ * "" "%t" "req.request" "req.url" "req.http.host" "resp.status" "client.ip" "req.http.user-agent" "req.http.referer" "req.http.Range" "req.header_bytes_read" "req.body_bytes_read" "resp.http.Content-Type" "resp.http.Age" "geoip.country_code" "geoip.region" "geoip.city" "resp.http.Location"
+ */
 
 case class FastlyLog(
   time: String,

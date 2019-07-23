@@ -96,7 +96,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     objects foreach { obj =>
 
       // get the log entries from the file that are 200 or 206 responses and have a valid range (if any)
-      val iabValidLogs = extractIABValidLogs(Source.fromBytes(IOUtils.toByteArray(obj.getObjectContent))("ISO-8859-1").getLines().toSeq)
+      val iabMarkedLogs = extractIABStateLogs(Source.fromBytes(IOUtils.toByteArray(obj.getObjectContent))("ISO-8859-1").getLines().toSeq)
 
       // TODO:
       // while we're debugging, we're going to write our condensed processed data to a
@@ -105,8 +105,8 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
       val outputFileName = obj.getKey().replaceFirst(".csv", "")
       val outputFile = File.createTempFile(outputFileName, ".tmp", new File("/tmp"))
       val outputStream = new FileOutputStream(outputFile)
-      iabValidLogs.foreach { log =>
-        outputStream.write(log.toCsv.getBytes)
+      iabMarkedLogs.foreach { logEntry =>
+        outputStream.write(logEntry.toCsv.getBytes)
         outputStream.write("\n".getBytes)
       }
       outputStream.flush()
@@ -121,19 +121,17 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     }
   }
 
-  private def ninetyPercentDelivered(row: AcastIabLog): Boolean = {
-    val thresholdPercent = 90
-    val bytesDelivered = (0 + row.bytesDelivered).toInt
-    val stitchSize = (0 + row.stitchSize).toInt
-    (bytesDelivered / stitchSize) * 100 >= thresholdPercent
+  private def percentDelivered(row: AcastIabLog, percent: Int): Boolean = {
+    val bytesDelivered = (0 + row.bytesDelivered).toDouble
+    val stitchSize = (0 + row.stitchSize).toDouble
+    ((bytesDelivered / stitchSize) * 100).toInt >= percent
   }
 
-  private def reachedEndOfStream(row: AcastIabLog): Boolean = {
+  private def reachedEndOfStream(row: AcastIabLog, threshold: Int): Boolean = {
     val stitchSize: Int = (0 + row.stitchSize).toInt
     val rangeFrom: Int = (0 + row.rangeFrom).toInt
     val rangeTo: Int = (0 + row.rangeTo).toInt
     val bytesDelivered: Int = (0 + row.bytesDelivered).toInt
-    val threshold: Int = 2048 // arbitrary number - 2Kb from end of file
 
     // return true if bytes were delivered
     // AND rangeFrom + bytesDelivered is within "threshold" bytes of the total stitch(file)Size
@@ -142,15 +140,18 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
       (rangeFrom + bytesDelivered >= stitchSize - threshold) || (rangeFrom + bytesDelivered >= stitchSize)
   }
 
-  private def extractIABValidLogs(logs: Seq[String]): Seq[AcastIabLog] = {
-    val validLogs = logs.flatMap { line =>
+  private def extractIABStateLogs(logs: Seq[String]): Seq[AcastIabLog] = {
+    val minimumDownloadedPercentage = 90
+    val streamThresholdBytes = 2048
+    logs.flatMap { line =>
       AcastIabLog(line)
-    }.filter(AcastIabLog.validHttpMethodAndStatus).partition(_.httpStatus == "200")
-    val validDownloadListens = validLogs._1.filter(ninetyPercentDelivered).map(_.copy(isIabValid = "true"))
-    val validInteractiveListens = validLogs._2.filter(reachedEndOfStream).map(_.copy(isIabValid = "true"))
-
-    validDownloadListens ++ validInteractiveListens
-
+    }.filter(AcastIabLog.validHttpMethodAndStatus).map { logEntry =>
+      logEntry.httpStatus match {
+        case "200" if percentDelivered(logEntry, minimumDownloadedPercentage) => logEntry.copy(isIabValid = "true")
+        case "206" if reachedEndOfStream(logEntry, streamThresholdBytes) => logEntry.copy(isIabValid = "true")
+        case _ => logEntry.copy(isIabValid = "false")
+      }
+    }
   }
 
 }

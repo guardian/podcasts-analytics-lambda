@@ -155,8 +155,7 @@ object AcastLog {
 
   def apply(line: String): Option[AcastLog] =
     parser.parseLine(line).map(log =>
-      log.copy(userAgent = AcastDecoder.decode(log.userAgent), filename = AcastDecoder.decode(log.filename))
-    )
+      log.copy(userAgent = AcastDecoder.decode(log.userAgent), filename = AcastDecoder.decode(log.filename)))
 
   /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
   val allowedRangePattern = """^0-(?!1$)""".r
