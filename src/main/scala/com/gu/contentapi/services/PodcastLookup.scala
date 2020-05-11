@@ -4,17 +4,17 @@ import java.util.concurrent.TimeUnit
 
 import com.gu.contentapi.client._
 import com.gu.contentapi.client.model.v1.SearchResponse
-import com.gu.contentapi.client.model.{ContentApiError, SearchQuery}
+import com.gu.contentapi.client.model.{ ContentApiError, SearchQuery }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ Await, Future }
 import com.gu.contentapi.Config.capiKey
 import okhttp3.OkHttpClient
 import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
 import scala.util.control.NonFatal
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 object PodcastLookup extends Logging {
 
