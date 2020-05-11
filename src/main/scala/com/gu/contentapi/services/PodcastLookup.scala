@@ -1,17 +1,20 @@
 package com.gu.contentapi.services
 
+import java.util.concurrent.TimeUnit
+
 import com.gu.contentapi.client._
 import com.gu.contentapi.client.model.v1.SearchResponse
-import com.gu.contentapi.client.model.{ ContentApiError, SearchQuery }
+import com.gu.contentapi.client.model.{ContentApiError, SearchQuery}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, ExecutionContext, Future}
 import com.gu.contentapi.Config.capiKey
+import okhttp3.OkHttpClient
 import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
 import scala.util.control.NonFatal
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
 object PodcastLookup extends Logging {
 
@@ -21,7 +24,15 @@ object PodcastLookup extends Logging {
   case class SuccessfulQuery(searchResponse: SearchResponse) extends ResponseFromCapiQuery
   case class FailedQuery(errorMsg: String) extends ResponseFromCapiQuery
 
-  val client = new GuardianContentClient(capiKey)
+  val client = new GuardianContentClient(capiKey) {
+    override def httpClientBuilder: OkHttpClient.Builder = {
+      // CAPI requests sometimes fail due to java.net.SocketTimeoutException: timeout
+      // It is suspected this is due to response not being read in (default CAPI-client read timeout of) 2s.
+      // Since these requests are being executed in a lambda (and not in response to a client request),
+      // we can safely increase the read timeout.
+      super.httpClientBuilder.readTimeout(10, TimeUnit.SECONDS)
+    }
+  }
 
   case class PodcastInfo(
     episodeId: String,
