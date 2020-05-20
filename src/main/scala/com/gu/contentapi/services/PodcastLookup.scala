@@ -89,7 +89,7 @@ object PodcastLookup extends Logging {
               // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
               // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
               // we most likely have issues and should fail the future.
-          }, PodcastLookup.httpReadTimeout + 10.seconds)
+          }, httpReadTimeout + 10.seconds)
       }
 
       result match {
