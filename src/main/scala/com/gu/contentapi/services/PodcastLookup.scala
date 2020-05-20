@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
+import scala.concurrent.duration._
 import scala.util.control.NonFatal
 import scala.util.{ Failure, Success, Try }
 
@@ -24,13 +25,15 @@ object PodcastLookup extends Logging {
   case class SuccessfulQuery(searchResponse: SearchResponse) extends ResponseFromCapiQuery
   case class FailedQuery(errorMsg: String) extends ResponseFromCapiQuery
 
+  val httpReadTimeout: Duration = 10.seconds
+
   val client = new GuardianContentClient(capiKey) {
     override def httpClientBuilder: OkHttpClient.Builder = {
       // CAPI requests sometimes fail due to java.net.SocketTimeoutException: timeout
       // It is suspected this is due to response not being read in (default CAPI-client read timeout of) 2s.
       // Since these requests are being executed in a lambda (and not in response to a client request),
       // we can safely increase the read timeout.
-      super.httpClientBuilder.readTimeout(10, TimeUnit.SECONDS)
+      super.httpClientBuilder.readTimeout(httpReadTimeout.toSeconds, TimeUnit.SECONDS)
     }
   }
 
@@ -83,7 +86,10 @@ object PodcastLookup extends Logging {
             case FailedQuery(err) =>
               logger.error(s"Failed to get podcast info from capi for file '$filePath': $err")
               None
-          }, 5.seconds)
+              // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
+              // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
+              // we most likely have issues and should fail the future.
+          }, PodcastLookup.httpReadTimeout + 10.seconds)
       }
 
       result match {
