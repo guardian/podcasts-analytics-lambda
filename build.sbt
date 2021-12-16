@@ -9,8 +9,8 @@ lazy val root = (project in file(".")).enablePlugins(JavaAppPackaging, RiffRaffA
 
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.8.1",
-  "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
-  "com.amazonaws" % "aws-lambda-java-log4j2" % "1.1.0",
+  "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0",
+  "com.amazonaws" % "aws-lambda-java-log4j2" % "1.4.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.133",
   "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
@@ -21,12 +21,12 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
-topLevelDirectory in Universal := None
-packageName in Universal := normalizedName.value
+Universal / topLevelDirectory := None
+Universal / packageName := normalizedName.value
 
 def env(key: String): Option[String] = Option(System.getenv(key))
 
-riffRaffPackageType := (packageBin in Universal).value
+riffRaffPackageType := (Universal / packageBin).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Off-platform::${name.value}"
