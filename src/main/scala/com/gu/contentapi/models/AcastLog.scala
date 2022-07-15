@@ -1,6 +1,7 @@
 package com.gu.contentapi.models
 
 import com.gu.contentapi.utils.CsvParser
+
 import purecsv.safe._
 
 import scala.util.Success
@@ -154,31 +155,7 @@ object AcastLog {
 
   def apply(line: String): Option[AcastLog] =
     parser.parseLine(line).map(log =>
-      log.copy(userAgent = decode(log.userAgent), filename = decode(log.filename))
-    )
-
-  val decodingMap = ListMap(
-    "%3C" -> "<",
-    "%3E" -> ">",
-    "%2522" -> "\"",
-    "%23" -> "#",
-    "%7B" -> "{",
-    "%7D" -> "}",
-    "%7C" -> "|",
-    "%255C" -> "\\",
-    "%5E" -> "^",
-    "%7E" -> "~",
-    "%5B" -> "[",
-    "%5D" -> "]",
-    "%60" -> "`",
-    "%27" -> "'",
-    "%2520" -> " ",
-    "%25" -> "%" /* should be the last to not override with %25XX */
-  )
-
-  private def decode(encoded: String): String = {
-    decodingMap.foldLeft(encoded) { case (cur, (from, to)) => cur.replaceAll(from, to) }
-  }
+      log.copy(userAgent = AcastDecoder.decode(log.userAgent), filename = AcastDecoder.decode(log.filename)))
 
   /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
   val allowedRangePattern = """^0-(?!1$)""".r
