@@ -3,7 +3,7 @@ stacks:
 deployments:
   podcasts-analytics-lambda:
     parameters:
-      bucket: content-api-dist
+      bucketSsmLookup: true
       fileName: podcasts-analytics-lambda.zip
       functions:
         PROD:
