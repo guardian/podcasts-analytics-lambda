@@ -14,7 +14,7 @@ object S3 extends Logging {
   val client: AmazonS3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build()
 
   def downloadReport(bucketName: String, reportName: String, retries: Int = 3): Option[S3Object] = {
-    Try(client.getObject(bucketName, reportName)) match {
+    Try(client.getObject(bucketName, reportName + "XX")) match {
       case Success(report) => {
         logger.info(s"Downloaded report $reportName")
         Some(report)
