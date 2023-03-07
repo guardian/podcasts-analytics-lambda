@@ -17,8 +17,6 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
   override def handleRequest(event: S3Event, context: Context): Unit = {
 
-    logger.debug("PMR: 07/03/2023")
-
     val fastlyReportObjects = event.getRecords.asScala
       .filter(rec => isLogType(Config.FastlyAudioLogsBucketName, rec.getS3))
       .flatMap(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
