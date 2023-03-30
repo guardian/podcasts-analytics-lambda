@@ -86,9 +86,9 @@ object PodcastLookup extends Logging {
             case FailedQuery(err) =>
               logger.error(s"Failed to get podcast info from capi for file '$filePath': $err")
               None
-              // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
-              // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
-              // we most likely have issues and should fail the future.
+            // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
+            // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
+            // we most likely have issues and should fail the future.
           }, httpReadTimeout + 10.seconds)
       }
 

@@ -13,9 +13,9 @@ class CsvParser[T: RawFieldsConverter] extends Logging {
   def parseLine(line: String): Option[T] = {
 
     /**
-      * We use purecsv.unsafe here because despite returning a List[Try[T]], safe.readCSVFromString itself
-      * can throw an exception.
-      */
+     * We use purecsv.unsafe here because despite returning a List[Try[T]], safe.readCSVFromString itself
+     * can throw an exception.
+     */
     val result: Try[Option[T]] = Try(reader.readCSVFromString(line).headOption)
 
     result match {

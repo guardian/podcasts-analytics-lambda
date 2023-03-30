@@ -1,6 +1,6 @@
 package com.gu.contentapi.services
 
-import okhttp3.{OkHttpClient, Request}
+import okhttp3.{ OkHttpClient, Request }
 import com.gu.contentapi.models.Event
 import com.gu.contentapi.utils.Encoding
 import org.apache.logging.log4j.scala.Logging

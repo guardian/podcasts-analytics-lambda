@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "com.github.melrief" %% "purecsv" % "0.1.1",
   "com.gu" %% "content-api-client-default" % "19.2.1",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
-  "net.openhft" % "zero-allocation-hashing" % "0.16",
+  "net.openhft" % "zero-allocation-hashing" % "0.6",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
