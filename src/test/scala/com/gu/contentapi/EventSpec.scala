@@ -1,11 +1,12 @@
 package com.gu.contentapi
 
 import com.gu.contentapi.models.{ Event, AcastLog, FastlyLog }
-import org.scalatest.{ FlatSpec, Matchers, OptionValues }
-
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should._
 import scala.io.Source
 
-class EventSpec extends FlatSpec with Matchers with OptionValues {
+class EventSpec extends AnyFlatSpec with Matchers with OptionValues {
 
   val fastlyLog1 = FastlyLog(
     time = "Fri, 11 Nov 2016 13:00:00 GMT",
@@ -81,7 +82,7 @@ class EventSpec extends FlatSpec with Matchers with OptionValues {
 
     val logs: Seq[FastlyLog] = Source.fromFile("src/test/resources/logs-sample.txt")("ISO-8859-1").getLines().toSeq flatMap { line => FastlyLog(line) }
 
-    val logsGrouped = logs.groupBy(f => f.status).mapValues(_.length)
+    val logsGrouped = logs.groupBy(f => f.status).view.mapValues(_.length)
 
     logsGrouped.get("206").value should be(71)
 

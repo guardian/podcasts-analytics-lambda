@@ -1,8 +1,10 @@
 package com.gu.contentapi.services
 
-import org.scalatest.{ FlatSpec, Matchers, OptionValues }
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should._
 
-class PodcastLookupSpec extends FlatSpec with Matchers with OptionValues {
+class PodcastLookupSpec extends AnyFlatSpec with Matchers with OptionValues {
 
   it should "Retrieve podcast id and episode id from the filename" in {
 

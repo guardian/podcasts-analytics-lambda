@@ -97,6 +97,9 @@ object PodcastLookup extends Logging {
         case Failure(NonFatal(e)) =>
           logger.error(s"CAPI request repeatedly failed: ${e.getMessage}", e)
           None
+        case Failure(err) => //if the exception was fatal, throw it and let the lambda runtime handle it. This will show up as a failure in the metrics
+          logger.error(s"A fatal error occurred trying to access CAPI: ${err.getMessage}", err)
+          throw err
       }
     }
   }

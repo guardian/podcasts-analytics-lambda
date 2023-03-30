@@ -7,7 +7,9 @@ import scala.util.{ Failure, Success, Try }
 import scala.util.control.NonFatal
 import org.apache.logging.log4j.scala.Logging
 
-class CsvParser[T: RawFieldsConverter] extends Logging {
+import scala.reflect.ClassTag
+
+class CsvParser[T: RawFieldsConverter](implicit classTag: ClassTag[T]) extends Logging {
   private val reader = CSVReader[T]
 
   def parseLine(line: String): Option[T] = {
@@ -26,6 +28,8 @@ class CsvParser[T: RawFieldsConverter] extends Logging {
       case Failure(e) if NonFatal(e) =>
         logger.warn(s"Failed to parse line: '$line': ${e.getMessage}", e)
         None
+      case Failure(err) => //if this _is_ a fatal exception, throw it and let the Lambda runtime error out. This should show up in metrics.
+        throw err
     }
   }
 }
