@@ -6,6 +6,7 @@ import purecsv.unsafe.converter.RawFieldsConverter
 import scala.util.{ Failure, Success, Try }
 import scala.util.control.NonFatal
 import org.apache.logging.log4j.scala.Logging
+import purecsv.config.{ Headers, Trimming }
 
 import scala.reflect.ClassTag
 
@@ -18,7 +19,7 @@ class CsvParser[T: RawFieldsConverter](implicit classTag: ClassTag[T]) extends L
      * We use purecsv.unsafe here because despite returning a List[Try[T]], safe.readCSVFromString itself
      * can throw an exception.
      */
-    val result: Try[Option[T]] = Try(reader.readCSVFromString(line).headOption)
+    val result: Try[Option[T]] = Try(reader.readCSVFromString(line, trimming = Trimming.TrimAll, headers = Headers.None).headOption)
 
     result match {
       case Success(Some(log)) => Some(log)
