@@ -76,7 +76,7 @@ Resources:
         Fn::GetAtt:
         - RootRole
         - Arn
-      Runtime: java8
+      Runtime: java11
       Timeout: 300
   LambdaInvocationAlarm:
     Type: AWS::CloudWatch::Alarm

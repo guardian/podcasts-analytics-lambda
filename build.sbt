@@ -2,7 +2,7 @@ organization  := "com.gu"
 description   := "AWS Lambda providing monitoring for podcasts consumption"
 scalacOptions += "-deprecation"
 scalaVersion  := "2.13.10"
-scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:8", "-Xfatal-warnings")
+scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:11", "-Xfatal-warnings")
 name := "podcasts-analytics-lambda"
 
 lazy val root = (project in file(".")).enablePlugins(JavaAppPackaging, RiffRaffArtifact)
@@ -30,3 +30,13 @@ riffRaffPackageType := (Universal / packageBin).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Off-platform::${name.value}"
+
+
+assembly / assemblyMergeStrategy := {
+  case "module-info.class"=>MergeStrategy.first
+  case PathList("META-INF","versions","9","module-info.class") => MergeStrategy.first
+  case PathList("META-INF","org","apache","logging","log4j","core","config","plugins","Log4j2Plugins.dat") => MergeStrategy.first
+  case x =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
+}
