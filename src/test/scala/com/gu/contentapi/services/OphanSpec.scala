@@ -1,9 +1,11 @@
 package com.gu.contentapi.services
 
-import com.gu.contentapi.models.{ Event }
-import org.scalatest.{ FlatSpec, Matchers, OptionValues }
+import com.gu.contentapi.models.Event
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should._
 
-class OphanSpec extends FlatSpec with Matchers with OptionValues {
+class OphanSpec extends AnyFlatSpec with Matchers with OptionValues {
 
   it should "send a single podcast to Ophan" in {
 

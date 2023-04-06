@@ -86,9 +86,9 @@ object PodcastLookup extends Logging {
             case FailedQuery(err) =>
               logger.error(s"Failed to get podcast info from capi for file '$filePath': $err")
               None
-              // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
-              // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
-              // we most likely have issues and should fail the future.
+            // Time taken to await the future should be at least the HTTP read timeout configured for requests to CAPI.
+            // If everything else takes > 10s + (PodcastLookup.httpReadTimeout - actual read time)s,
+            // we most likely have issues and should fail the future.
           }, httpReadTimeout + 10.seconds)
       }
 
@@ -97,6 +97,9 @@ object PodcastLookup extends Logging {
         case Failure(NonFatal(e)) =>
           logger.error(s"CAPI request repeatedly failed: ${e.getMessage}", e)
           None
+        case Failure(err) => //if the exception was fatal, throw it and let the lambda runtime handle it. This will show up as a failure in the metrics
+          logger.error(s"A fatal error occurred trying to access CAPI: ${err.getMessage}", err)
+          throw err
       }
     }
   }

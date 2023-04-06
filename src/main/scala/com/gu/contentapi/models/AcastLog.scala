@@ -154,8 +154,7 @@ object AcastLog {
 
   def apply(line: String): Option[AcastLog] =
     parser.parseLine(line).map(log =>
-      log.copy(userAgent = decode(log.userAgent), filename = decode(log.filename))
-    )
+      log.copy(userAgent = decode(log.userAgent), filename = decode(log.filename)))
 
   val decodingMap = ListMap(
     "%3C" -> "<",

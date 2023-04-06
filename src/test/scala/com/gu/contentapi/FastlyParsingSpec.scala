@@ -2,11 +2,13 @@ package com.gu.contentapi
 
 import com.gu.contentapi.models.{ Event, FastlyLog }
 import com.gu.contentapi.services.PodcastLookup
-import org.scalatest.{ FlatSpec, Matchers, OptionValues }
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should._
 
 import scala.io.Source
 
-class FastlyParsingSpec extends FlatSpec with Matchers with OptionValues {
+class FastlyParsingSpec extends AnyFlatSpec with Matchers with OptionValues {
 
   it should "parse a log file into a Fastly log model" in {
 
