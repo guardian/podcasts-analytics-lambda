@@ -5,8 +5,6 @@ scalaVersion  := "2.13.10"
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:11", "-Xfatal-warnings")
 name := "podcasts-analytics-lambda"
 
-lazy val root = (project in file(".")).enablePlugins(JavaAppPackaging, RiffRaffArtifact)
-
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "2.2.2",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0",
@@ -21,16 +19,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.15" % "test"
 )
 
-Universal / topLevelDirectory := None
-Universal / packageName := normalizedName.value
-
 def env(key: String): Option[String] = Option(System.getenv(key))
-
-riffRaffPackageType := (Universal / packageBin).value
-riffRaffUploadArtifactBucket := Option("riffraff-artifact")
-riffRaffUploadManifestBucket := Option("riffraff-builds")
-riffRaffManifestProjectName := s"Off-platform::${name.value}"
-
 
 assembly / assemblyMergeStrategy := {
   case "module-info.class"=>MergeStrategy.first
@@ -40,3 +29,5 @@ assembly / assemblyMergeStrategy := {
     val oldStrategy = (assembly / assemblyMergeStrategy).value
     oldStrategy(x)
 }
+
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-u", sys.env.getOrElse("SBT_JUNIT_OUTPUT", "junit"))
