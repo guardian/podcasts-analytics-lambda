@@ -5,6 +5,10 @@ scalaVersion  := "2.13.10"
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:11", "-Xfatal-warnings")
 name := "podcasts-analytics-lambda"
 
+enablePlugins(JavaAppPackaging)
+Universal / topLevelDirectory := None
+Universal / packageName := normalizedName.value
+
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "2.2.2",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0",
@@ -21,13 +25,5 @@ libraryDependencies ++= Seq(
 
 def env(key: String): Option[String] = Option(System.getenv(key))
 
-assembly / assemblyMergeStrategy := {
-  case "module-info.class"=>MergeStrategy.first
-  case PathList("META-INF","versions","9","module-info.class") => MergeStrategy.first
-  case PathList("META-INF","org","apache","logging","log4j","core","config","plugins","Log4j2Plugins.dat") => MergeStrategy.first
-  case x =>
-    val oldStrategy = (assembly / assemblyMergeStrategy).value
-    oldStrategy(x)
-}
 
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-u", sys.env.getOrElse("SBT_JUNIT_OUTPUT", "junit"))
