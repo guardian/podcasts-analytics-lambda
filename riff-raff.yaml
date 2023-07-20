@@ -4,10 +4,10 @@ deployments:
   podcasts-analytics-lambda:
     parameters:
       bucketSsmLookup: true
-      fileName: podcasts-analytics-lambda.zip
+      fileName: podcasts-analytics-lambda.jar
       functions:
         PROD:
-          filename: podcasts-analytics-lambda.zip
+          filename: podcasts-analytics-lambda.jar
           name: podcasts-analytics-lambda-PROD-Lambda-UQMPL25PEG6O
     type: aws-lambda
 regions:
