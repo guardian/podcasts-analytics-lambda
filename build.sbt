@@ -24,7 +24,7 @@ def env(key: String): Option[String] = Option(System.getenv(key))
 assembly / assemblyMergeStrategy := {
   case "module-info.class"=>MergeStrategy.first
   case PathList("META-INF","versions","9","module-info.class") => MergeStrategy.first
-  case PathList("META-INF","org","apache","logging","log4j","core","config","plugins","Log4j2Plugins.dat") => MergeStrategy.first
+  case PathList("META-INF","org","apache","logging","log4j","core","config","plugins","Log4j2Plugins.dat") => MergeStrategy.discard
   case x =>
     val oldStrategy = (assembly / assemblyMergeStrategy).value
     oldStrategy(x)
