@@ -28,7 +28,7 @@ jobs:
         env:
           CAPI_KEY: ${{secrets.CAPI_KEY}}
           SBT_JUNIT_OUTPUT: ./junit-tests
-        run: sbt 'test;assembly'
+        run: sbt 'test;universal:packageBin'
 
 
       - uses: EnricoMi/publish-unit-test-result-action@v1
@@ -40,8 +40,6 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{secrets.GU_RIFF_RAFF_ROLE_ARN}}
 
-      - run: cp target/scala-2.13/podcasts-analytics-lambda-assembly-0.1.0-SNAPSHOT.jar podcasts-analytics-lambda.jar
-
       - uses: guardian/actions-riff-raff@v2
         with:
           configPath: riff-raff.yaml
@@ -49,4 +47,4 @@ jobs:
           buildNumberOffset: 192
           contentDirectories: |
             podcasts-analytics-lambda:
-              - podcasts-analytics-lambda.jar
+              - target/universal/podcasts-analytics-lambda.zip
