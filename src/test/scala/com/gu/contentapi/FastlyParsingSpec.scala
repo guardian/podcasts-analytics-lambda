@@ -1,9 +1,8 @@
 package com.gu.contentapi
 
-import com.gu.contentapi.models.{ Event, FastlyLog }
-import com.gu.contentapi.services.PodcastLookup
-import org.scalatest.flatspec.AnyFlatSpec
+import com.gu.contentapi.models.FastlyLog
 import org.scalatest.OptionValues
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should._
 
 import scala.io.Source
@@ -36,7 +35,7 @@ class FastlyParsingSpec extends AnyFlatSpec with Matchers with OptionValues {
       region = "MI",
       city = "Ypsilanti",
       location = "")
-    firstPw should be(pageViews.head)
+    pageViews.head should be (firstPw)
 
     val secondPw = FastlyLog(
       time = "Fri, 11 Nov 2016 13:00:00 GMT",
@@ -79,4 +78,13 @@ class FastlyParsingSpec extends AnyFlatSpec with Matchers with OptionValues {
     thirdPw should be(pageViews(2))
   }
 
-}
+    it should "parse lines containing double quotes" in {
+      val pageViews = Source.fromFile("src/test/resources/logs-with-poorly-escaped-doublequote-line.txt")("ISO-8859-1").getLines().toSeq flatMap { line =>
+        FastlyLog(line)
+      }
+
+      pageViews.length should be(1)
+      val lineWithDoubleQuote = pageViews.head
+      lineWithDoubleQuote.url shouldBe "/forum/index.php?SQ=0&t=search&srch=2WhWHlCyD3McfpRCsd4u0kgaYzV&btn_submit=Search&field=all&forum_limiter&attach=0&search_logic=AND&sort_order=REL&author=x\"+onmouseover%3Dalert%28document.domain%29+x%3D%22"
+    }
+  }

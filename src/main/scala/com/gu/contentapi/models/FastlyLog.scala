@@ -1,6 +1,8 @@
 package com.gu.contentapi.models
 
-import com.gu.contentapi.utils.CsvParser
+import org.apache.logging.log4j.scala.Logging
+
+import scala.util.Try
 
 /**
  * Log format:
@@ -27,26 +29,55 @@ case class FastlyLog(
   city: String,
   location: String)
 
-object FastlyLog {
+object FastlyLog extends Logging {
 
-  private val parser = new CsvParser[FastlyLog]
+  def apply(line: String): Option[FastlyLog] = {
+    for {
+      withoutHeader <- removeFastlyFootprint(line)
+      fastlyLog <- parseLine(withoutHeader)
+    } yield {
+      fastlyLog
+    }
+  }
 
-  def apply(line: String): Option[FastlyLog] = cleanLog(line) flatMap parser.parseLine
+  private def parseLine(withoutHeader: String): Option[FastlyLog] = {
+    val triedLog = Try {
+      val fields = withoutHeader.drop(1).dropRight(1).split("\" \"")
+      val cleanedFields = fields.map(replaceNullElements andThen removeEscapedQuotes)
+      FastlyLog(
+        cleanedFields(0),
+        cleanedFields(1),
+        cleanedFields(2),
+        cleanedFields(3),
+        cleanedFields(4),
+        cleanedFields(5),
+        cleanedFields(6),
+        cleanedFields(7),
+        cleanedFields(8),
+        cleanedFields(9),
+        cleanedFields(10),
+        cleanedFields(11),
+        cleanedFields(12),
+        cleanedFields(13),
+        cleanedFields(14),
+        cleanedFields(15),
+        cleanedFields(16)
+      )
+    }
+    triedLog.toEither.left.foreach { e =>
+      logger.warn(s"Failed to parse line: '$withoutHeader': ${e.getMessage}", e)
+    }
+    triedLog.toOption
+  }
 
   private def removeFastlyFootprint(line: String): Option[String] = line.split(""": "" """).tail.headOption
-
-  private def makeCsvLike: String => String = _.replaceAll("""" """", """","""")
 
   private def replaceNullElements: String => String = _.replaceAll("""\(null\)""", "")
 
   private def removeEscapedQuotes: String => String = _.replaceAll("""\\"""", "")
 
-  // turns a log line into a nicely formatted csv string we can fit in our model
-
-  val cleanLog: String => Option[String] = removeFastlyFootprint(_) map (makeCsvLike andThen replaceNullElements andThen removeEscapedQuotes)
-
   /* filter out partial content requests unless the byte-range starts from 0 and is not 0-1 */
-  val allowedRangePattern = """^bytes=0-(?!1$)""".r
+  private val allowedRangePattern = """^bytes=0-(?!1$)""".r
   val onlyDownloads: FastlyLog => Boolean = log =>
     log.status != "206" || allowedRangePattern.findFirstIn(log.range).nonEmpty
 
