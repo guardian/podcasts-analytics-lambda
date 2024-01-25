@@ -17,10 +17,10 @@ This lambda currently pulls audio data from logs provided by Fastly and Acast.
 
 ### Run & Tests
 
-To run locally you need to export a valid CAPI key as a local variable:
+To run locally you need to export a valid PROD CAPI key as a local variable:
 
 ```
-export CAPI_KEY='your-key'
+export CAPI_KEY='your-PROD-key'
 sbt test
 ```
 
