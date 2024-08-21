@@ -72,6 +72,8 @@ Resources:
           CAPI_KEY: !Ref ContentApiKey
       Handler: com.gu.contentapi.Lambda::handleRequest
       MemorySize: 512
+      EphemeralStorage:
+        Size: 1024  #Provision 1Gb of temp storage for downloads
       Role:
         Fn::GetAtt:
         - RootRole

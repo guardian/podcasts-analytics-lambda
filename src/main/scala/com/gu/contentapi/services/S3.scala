@@ -26,7 +26,10 @@ object S3 extends Logging {
       .build()
 
     val f = transferManager.downloadFile(req)
-    f.completionFuture().asScala.map(_ => tempFile)
+    f.completionFuture().asScala.map(_ => {
+      logger.info(s"Downloaded s3://$bucketName/$reportName")
+      tempFile
+    })
   }
 
   def downloadReport(bucketName: String, reportName: String, retries: Int = 3): Future[Option[Path]] = {
