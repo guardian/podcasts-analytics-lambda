@@ -53,7 +53,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     objects foreach { obj =>
       Loader.linesFromFile(obj).map(_.flatMap(FastlyLog.apply)) match {
         case Success(allFastlyLogs) =>
-
+          logger.debug(s"Fastly: processing ${obj.toString}")
           val downloadsLogs = allFastlyLogs.filter(FastlyLog.onlyDownloads && FastlyLog.onlyGet)
           Ophan.send(downloadsLogs.flatMap(Event(_)))
 
@@ -67,6 +67,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     objects foreach { obj =>
       Loader.linesFromFile(obj).map(_.flatMap(AcastLog.apply(_))) match {
         case Success(allAcastLogs) =>
+          logger.debug(s"Acast: processing ${obj.toString}")
           val downloadsLogs = allAcastLogs.filter(AcastLog.onlyDownloads && AcastLog.onlySuccessfulReponses && AcastLog.onlyGet)
 
           Ophan.send(downloadsLogs.flatMap(Event(_)))
