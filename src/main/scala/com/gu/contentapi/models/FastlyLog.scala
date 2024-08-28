@@ -61,8 +61,7 @@ object FastlyLog extends Logging {
         cleanedFields(13),
         cleanedFields(14),
         cleanedFields(15),
-        cleanedFields(16)
-      )
+        cleanedFields(16))
     }
     triedLog.toEither.left.foreach { e =>
       logger.warn(s"Failed to parse line: '$withoutHeader': ${e.getMessage}", e)

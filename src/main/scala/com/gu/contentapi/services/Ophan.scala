@@ -12,13 +12,14 @@ object Ophan extends Logging {
 
   private val eventsPerSecond = 30
 
-  def send(events: Seq[Event]): Unit = {
+  def send(events: Seq[Event]): Int = {
     events.grouped(eventsPerSecond) foreach { batch =>
       Thread.sleep(1000)
       batch.foreach(Ophan.send)
     }
 
     logger.info(s"Events sent to Ophan: ${events.length}")
+    events.length
   }
 
   private def send(event: Event): Unit = {
