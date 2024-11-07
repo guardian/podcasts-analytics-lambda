@@ -34,17 +34,4 @@ object Event {
       ua = fastlyLog.userAgent,
       platform = Option(parsedUrl.queryParameter("platform")))
   }
-
-  def apply(acastLog: AcastLog): Option[Event] =
-    PodcastLookup.getPodcastInfo(acastLog.filename).map { info =>
-      Event(
-        viewId = acastLog.cloudfrontRequestId,
-        url = acastLog.filename,
-        ipAddress = acastLog.ipAddress,
-        episodeId = info.episodeId,
-        podcastId = info.podcastId,
-        ua = acastLog.userAgent,
-        platform = None // TODO investigate if we could retrieved it from acastLog.query
-      )
-    }
 }
