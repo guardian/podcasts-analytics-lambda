@@ -2,7 +2,7 @@ organization  := "com.gu"
 description   := "AWS Lambda providing monitoring for podcasts consumption"
 scalacOptions += "-deprecation"
 scalaVersion  := "2.13.14"
-scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:11", "-Xfatal-warnings")
+scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-release:11", "-Xfatal-warnings", "-Xlint:unused")
 name := "podcasts-analytics-lambda"
 
 enablePlugins(JavaAppPackaging)
