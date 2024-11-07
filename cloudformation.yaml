@@ -46,12 +46,7 @@ Resources:
             - s3:Get*
             - s3:Delete*
             Resource:
-            - arn:aws:s3::*:content-api-config/*
             - arn:aws:s3::*:content-api-dist/*
-            - arn:aws:s3::*:fastly-logs-audio
-            - arn:aws:s3::*:fastly-logs-audio/*
-            - arn:aws:s3::*:acast-logs-audio
-            - arn:aws:s3::*:acast-logs-audio/*
             - arn:aws:s3::*:gu-audio-logs/*
             Effect: Allow
   Lambda:
