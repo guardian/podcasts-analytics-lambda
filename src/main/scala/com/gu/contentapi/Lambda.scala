@@ -23,7 +23,7 @@ class Lambda extends RequestHandler[S3Event, Unit] with Logging {
     val fastlyReportObjects = Await.result(
       Future.sequence(
         event.getRecords.asScala
-          .filter(rec => isLogType(Config.FastlyAudioLogsBucketName, rec.getS3))
+          .filter(rec => isLogType(Config.FastlyAudioLogsPathName, rec.getS3))
           .map(rec => S3.downloadReport(rec.getS3.getBucket.getName, rec.getS3.getObject.getKey.replaceAll("%3A", ":"))) // looks like the json object is not decoded properly by the SKD
       ).map(_.toList),
       Duration(context.getRemainingTimeInMillis, TimeUnit.MILLISECONDS))
