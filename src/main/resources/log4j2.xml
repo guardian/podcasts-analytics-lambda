@@ -8,8 +8,7 @@
         </Lambda>
     </Appenders>
     <Loggers>
-        <Logger name="com.gu" level="debug"/>
-        <Root level="info">
+        <Root level="INFO">
             <AppenderRef ref="Lambda"/>
         </Root>
     </Loggers>
