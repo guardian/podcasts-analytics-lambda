@@ -120,7 +120,9 @@ Resources:
   LambdaLogErrorsMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
-      FilterPattern: "?FATAL ?ERROR ?WARN"
+      # -ResourceLeakDetector to ensure we do not alarm on unavoidable and seemingly
+      # harmless error messages from Netty - see https://github.com/aws/aws-sdk-java-v2/issues/4654
+      FilterPattern: "?FATAL ?ERROR ?WARN -ResourceLeakDetector"
       LogGroupName: !Sub "/aws/lambda/${FunctionName}"
       MetricTransformations:
         - MetricValue: 1
