@@ -13,9 +13,10 @@ val awsVersion = "2.27.8"
 
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "2.2.2",
-  "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0",
+  "org.apache.logging.log4j" %% "log4j-api-scala" % "13.1.0",
   "com.amazonaws" % "aws-lambda-java-log4j2" % "1.6.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
+  "org.apache.logging.log4j" % "log4j-layout-template-json" % "2.23.1",
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "s3-transfer-manager" % awsVersion,
   "com.amazonaws" % "aws-lambda-java-events" % "3.13.0",
