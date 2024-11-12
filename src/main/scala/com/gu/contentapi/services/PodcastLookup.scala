@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient
 import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.concurrent.TrieMap
-import scala.concurrent.duration._
 import scala.util.control.NonFatal
 import scala.util.{ Failure, Success, Try }
 
