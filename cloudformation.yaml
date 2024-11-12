@@ -129,7 +129,7 @@ Resources:
         - MetricValue: 1
           MetricNamespace: content-api/podcasts-analytics-lambda
           MetricName: LogErrors
-  LambdaLogErrorWarnMetricFilter:
+  LambdaLogErrorMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
       FilterPattern: "ERROR -ResourceLeakDetector"
