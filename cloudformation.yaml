@@ -138,7 +138,7 @@ Resources:
         - MetricValue: 1
           MetricNamespace: content-api/podcasts-analytics-lambda
           MetricName: LogErrors
-  LambdaLogFatalWarnMetricFilter:
+  LambdaLogFatalMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
       FilterPattern: "FATAL -ResourceLeakDetector"
