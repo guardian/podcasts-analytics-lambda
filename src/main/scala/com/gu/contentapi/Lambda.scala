@@ -19,7 +19,7 @@ import scala.concurrent.duration.Duration
 class Lambda extends RequestHandler[S3Event, Unit] with Logging {
 
   override def handleRequest(event: S3Event, context: Context): Unit = {
-
+    logger.error("ERROR i.n.u.ResourceLeakDetector - LEAK: ByteBuf.release() was not called before it's garbage-collected. <THIS ERROR IS A TEST LOG LINE, PLEASE IGNORE>")
     val fastlyReportObjects = Await.result(
       Future.sequence(
         event.getRecords.asScala
