@@ -112,10 +112,31 @@ Resources:
       TreatMissingData: notBreaching
       AlarmActions:
         - !Ref AlarmSnsTopic
-  LambdaLogErrorsMetricFilter:
+  # Alarm on WARN, ERROR and FATAL metrics.
+  # -ResourceLeakDetector to ensure we do not alarm on unavoidable and seemingly
+  # harmless error messages from Netty - see https://github.com/aws/aws-sdk-java-v2/issues/4654
+  LambdaLogWarnMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
-      FilterPattern: "?FATAL ?ERROR ?WARN"
+      FilterPattern: "WARN -ResourceLeakDetector"
+      LogGroupName: !Sub "/aws/lambda/${FunctionName}"
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: content-api/podcasts-analytics-lambda
+          MetricName: LogErrors
+  LambdaLogErrorMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: "ERROR -ResourceLeakDetector"
+      LogGroupName: !Sub "/aws/lambda/${FunctionName}"
+      MetricTransformations:
+        - MetricValue: 1
+          MetricNamespace: content-api/podcasts-analytics-lambda
+          MetricName: LogErrors
+  LambdaLogFatalMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: "FATAL -ResourceLeakDetector"
       LogGroupName: !Sub "/aws/lambda/${FunctionName}"
       MetricTransformations:
         - MetricValue: 1
