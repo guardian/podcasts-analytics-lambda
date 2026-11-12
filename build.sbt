@@ -13,6 +13,20 @@ val awsVersion = "2.27.8"
 
 dependencyOverrides += "org.apache.thrift" % "libthrift" % "0.24.0"
 
+// Stay on the AWS SDK's Netty 4.1 line, keeping native and Java modules aligned.
+dependencyOverrides ++= Seq(
+  "netty-buffer",
+  "netty-codec",
+  "netty-codec-http",
+  "netty-codec-http2",
+  "netty-common",
+  "netty-handler",
+  "netty-resolver",
+  "netty-transport",
+  "netty-transport-classes-epoll",
+  "netty-transport-native-unix-common"
+).map("io.netty" % _ % "4.1.137.Final")
+
 dependencyOverrides ++= Seq(
   "org.apache.httpcomponents.client5" % "httpclient5" % "5.6.3",
   "org.apache.httpcomponents.core5" % "httpcore5" % "5.4.3",
