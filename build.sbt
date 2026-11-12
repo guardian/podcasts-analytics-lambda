@@ -10,6 +10,13 @@ Universal / topLevelDirectory := None
 Universal / packageName := normalizedName.value
 
 val awsVersion = "2.27.8"
+val log4jVersion = "2.25.5"
+
+dependencyOverrides ++= Seq(
+  "org.apache.logging.log4j" % "log4j-api" % log4jVersion,
+  "org.apache.logging.log4j" % "log4j-core" % log4jVersion,
+  "org.apache.logging.log4j" % "log4j-layout-template-json" % log4jVersion
+)
 
 dependencyOverrides += "org.apache.thrift" % "libthrift" % "0.24.0"
 
@@ -38,7 +45,7 @@ libraryDependencies ++= Seq(
   "org.apache.logging.log4j" %% "log4j-api-scala" % "13.1.0",
   "com.amazonaws" % "aws-lambda-java-log4j2" % "1.6.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
-  "org.apache.logging.log4j" % "log4j-layout-template-json" % "2.23.1",
+  "org.apache.logging.log4j" % "log4j-layout-template-json" % log4jVersion,
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "s3-transfer-manager" % awsVersion,
   "com.amazonaws" % "aws-lambda-java-events" % "3.13.0",
