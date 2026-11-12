@@ -11,6 +11,8 @@ Universal / packageName := normalizedName.value
 
 val awsVersion = "2.27.8"
 
+dependencyOverrides += "org.apache.thrift" % "libthrift" % "0.24.0"
+
 libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "2.2.2",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "13.1.0",
